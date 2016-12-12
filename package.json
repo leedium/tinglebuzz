@@ -1,0 +1,55 @@
+{
+  "name": "tinglebuzz",
+  "version": "1.0.0",
+  "description": "Realtime informational assistance.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha src/**/*.test.js",
+    "test:watch": "npm run test -- --watch",
+    "lint": "NODE_ENV=development ./node_modules/.bin/esw --color --env browser,node ./src ./tools",
+    "lint:watch": "npm run lint -- -w",
+    "dev": "npm-run-all lint:watch build:dev",
+    "build:dev": "NODE_ENV=development babel-node ./tools/start.js",
+    "prod": "npm-run-all lint build:prod",
+    "build:prod": "NODE_ENV=production webpack --config tools/webpack.prod.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leedium/tinglebuzz.git"
+  },
+  "author": "David Lee",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/leedium/tinglebuzz/issues"
+  },
+  "homepage": "https://github.com/leedium/tinglebuzz#readme",
+  "devDependencies": {
+    "babel-loader": "^6.2.9",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-react": "^6.16.0",
+    "babel-preset-stage-0": "^6.16.0",
+    "colors": "^1.1.2",
+    "copy": "^0.3.0",
+    "cp": "^0.2.0",
+    "del": "^2.2.2",
+    "enzyme": "^2.6.0",
+    "eslint": "^3.12.0",
+    "eslint-config-airbnb": "^13.0.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^2.2.3",
+    "eslint-plugin-react": "^6.8.0",
+    "eslint-watch": "^2.1.14",
+    "expect": "^1.20.2",
+    "mocha": "^3.2.0",
+    "npm-run-all": "^3.1.2",
+    "supertest": "^2.0.1",
+    "webpack": "^2.1.0-beta.27",
+    "webpack-dev-middleware": "^1.8.4",
+    "webpack-hot-middleware": "^2.13.2"
+  },
+  "dependencies": {
+    "express": "^4.14.0",
+    "koa": "^2.0.0",
+    "koa-webpack": "^0.1.10"
+  }
+}

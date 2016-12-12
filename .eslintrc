@@ -1,0 +1,11 @@
+{
+  "globals": {
+    "process": true,
+    "__dirname": true
+  },
+  "extends": ["airbnb"],
+  "rules": {
+    "import/no-extraneous-dependencies": 0,
+    "no-unused-vars": 0
+  }
+}
