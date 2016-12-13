@@ -1,13 +1,13 @@
-import isDev from './env';
 import clean from './clean';
 import copy from './copy';
 import client from './client';
-import server from './server';
+import db from './db';
 
 const run = async () => {
-  await clean();
-  await copy();
-  await client();
-}
+   await clean();
+   await copy();
+   await db();
+   await client();
+};
 
 run();

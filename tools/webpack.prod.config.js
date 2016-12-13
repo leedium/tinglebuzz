@@ -1,14 +1,22 @@
 const webpack  = require('webpack');
 const path  = require('path');
-const entry = path.resolve(__dirname, '../src/app.js');
+const clientEntry = path.resolve(__dirname, '../src/client/app.js');
 const distDir = path.resolve(__dirname, '../dist');
 
 module.exports = {
-  entry: entry,
+  entry: {
+    app: clientEntry,
+  },
   output: {
     path: distDir,
     publicPath: '/',
-    filename: 'app.bundle.js'
-  }
+    filename: '[name].bundle.js'
+  },
+  target: "web",
+  plugins:[
+    new webpack.optimize.OccurrenceOrderPlugin(),
+    new webpack.optimize.UglifyJsPlugin(),
+    new webpack.NoErrorsPlugin(),
+  ]
 }
 

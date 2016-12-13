@@ -1,5 +1,4 @@
 import copy from 'copy';
-import path from 'path';
 
 const copyfiles = () => {
   return new Promise((resolve, reject) => {
