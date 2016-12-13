@@ -11,7 +11,7 @@
     "start:dev": "better-npm-run start:dev",
     "start:prod": "better-npm-run start:prod",
     "prod": "better-npm-run start:prod",
-    "build:dev": "babel-node ./tools/start.js",
+    "build:dev:client": "babel-node ./tools/start.js",
     "build:dev:server": "nodemon --watch ./src/server/ --exec babel-node ./src/server/server.js",
     "build:prod:client": "webpack --config tools/webpack.config.js",
     "build:prod:server": "NODE_ENV=production webpack --config tools/webpack.server.config.js",
@@ -26,7 +26,9 @@
         "REST_PORT": 3002,
         "MONGODB_URL": "mongodb://localhost:27017/tinglebuzz",
         "REDIS_PORT": 6379,
-        "SOCKET_PORT": 4071
+        "SOCKET_PORT": 4071,
+        "SSL_KEY": "../../../ssl/client-key.pem",
+        "SSL_CERT": "../../../ssl/client-cert.pem"
       }
     },
     "start:prod": {

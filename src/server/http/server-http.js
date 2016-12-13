@@ -1,5 +1,7 @@
 /* eslint-disable no-console */
-
+import https from 'https';
+import fs from 'fs';
+import path from 'path';
 import colors from 'colors';
 import express from 'express';
 import httpProxy from 'http-proxy';
@@ -9,33 +11,39 @@ export const RESTServer = () =>
   new Promise((resolve, reject) => {
     const app = express();
     const port = process.env.REST_PORT || 3002;
-    const proxy = httpProxy.createProxyServer({});
+    const ssl = {
+      key: fs.readFileSync(path.resolve(__dirname, process.env.SSL_KEY)),
+      cert: fs.readFileSync(path.resolve(__dirname, process.env.SSL_CERT)),
+    }
 
     app.use(bodyparser.json());
 
     if (process.env.NODE_ENV === 'development') {
-      app.get('*', (req, res) => {
+      const proxy = httpProxy.createServer({
+        changeOrigin: true,
+        ws: true,
+        ssl,
+      });
+      app.get('/*', (req, res) => {
         proxy.web(req, res, {
           target: 'http://localhost:3000',
-          ws: true,
-          changeOrigin: true,
         });
       });
     }
 
-
     app.post('/login', (req, res) => {
       res.json({ ok: true });
     });
-    app.listen(port, (err) => {
-      if (err) {
-        console.log('ddd', err);
-        reject(err);
-        return;
-      }
-      console.log(`RESTAPI server started on port: ${port}`.green);
-      resolve(app);
-    });
+
+    https.createServer(ssl, app)
+      .listen(process.env.REST_PORT,(err) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        console.log(`RESTAPI server started on port: ${process.env.REST_PORT}`.green);
+        resolve(app);
+      });
   });
 
 export default RESTServer;
