@@ -1,4 +1,5 @@
 node_modules/
 db/mongodb/data
 .idea/
+.vagrant/
 dump.rdb

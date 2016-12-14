@@ -10,11 +10,11 @@ import bodyparser from 'body-parser';
 export const RESTServer = () =>
   new Promise((resolve, reject) => {
     const app = express();
-    const port = process.env.REST_PORT || 3002;
+    const port = process.env.REST_PORT || 3001;
     const ssl = {
       key: fs.readFileSync(path.resolve(__dirname, process.env.SSL_KEY)),
       cert: fs.readFileSync(path.resolve(__dirname, process.env.SSL_CERT)),
-    }
+    };
 
     app.use(bodyparser.json());
 
@@ -36,13 +36,10 @@ export const RESTServer = () =>
     });
 
     https.createServer(ssl, app)
-      .listen(process.env.REST_PORT,(err) => {
-        if (err) {
-          reject(err);
-          return;
-        }
+      .listen(process.env.REST_PORT, (err) => {
+        if (err) { return reject(err); }
         console.log(`RESTAPI server started on port: ${process.env.REST_PORT}`.green);
-        resolve(app);
+        return resolve(app);
       });
   });
 

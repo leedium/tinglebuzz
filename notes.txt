@@ -1,2 +1,9 @@
+vagrant
+#updates the hostfile automatically
+vagrant plugin install vagrant-hostsupdater
+
+# notfies the hose of changes to the file system. (webpack HMR)
+vagrant plugin install vagrant-notify-forwarder
+
 esLint:
 airbnb config requires eslint-plugin-jsx-a11y@2.2.3

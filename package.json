@@ -23,7 +23,7 @@
       "env": {
         "NODE_ENV": "development",
         "HTTP_PORT": 3000,
-        "REST_PORT": 3002,
+        "REST_PORT": 3001,
         "MONGODB_URL": "mongodb://localhost:27017/tinglebuzz",
         "REDIS_PORT": 6379,
         "SOCKET_PORT": 4071,
