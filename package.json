@@ -13,33 +13,43 @@
     "prod": "better-npm-run start:prod",
     "build:dev:client": "babel-node ./tools/start.js",
     "build:dev:server": "nodemon --watch ./src/server/ --exec babel-node ./src/server/server.js",
+    "build:dev:socket": "nodemon --exec babel-node ./src/socketcluster/server.js",
     "build:prod:client": "webpack --config tools/webpack.config.js",
     "build:prod:server": "NODE_ENV=production webpack --config tools/webpack.server.config.js",
     "redis": "redis-server"
   },
   "betterScripts": {
     "start:dev": {
-      "command": "npm-run-all --parallel build:dev:client build:dev:server redis",
+      "command": "npm-run-all --parallel build:dev:client build:dev:server build:dev:socket redis",
       "env": {
+        "ENV": "dev",
         "NODE_ENV": "development",
         "HTTP_PORT": 3000,
         "REST_PORT": 3001,
         "MONGODB_URL": "mongodb://localhost:27017/tinglebuzz",
         "REDIS_PORT": 6379,
         "SOCKET_PORT": 4071,
-        "SSL_KEY": "../../../ssl/client-key.pem",
-        "SSL_CERT": "../../../ssl/client-cert.pem"
+        "SOCKETCLUSTER_APP_NAME": "tinglebuzz_dev",
+        "SOCKETCLUSTER_KILL_MASTER_SIGNAL": true,
+        "SOCKETCLUSTER_PROTOCOL": "http",
+        "SSL_KEY": "ssl/client-key.pem",
+        "SSL_CERT": "ssl/client-cert.pem"
       }
     },
     "start:prod": {
       "command": "npm-run-all lint build:prod:client build:prod:server",
       "env": {
+        "SOCKETCLUSTER_APP_NAME": "tinglebuzz",
+        "ENV": "prod",
         "NODE_ENV": "production",
         "HTTP_PORT": 3000,
         "REST_PORT": 3002,
         "MONGODB_URL": "mongodb://localhost:27017/tinglebuzz",
         "REDIS_URL": "redis://localhost:6379",
-        "SOCKET_PORT": 4071
+        "SOCKET_PORT": 4071,
+        "SOCKETCLUSTER_APP_NAME": "tinglebuzz",
+        "SOCKETCLUSTER_KILL_MASTER_SIGNAL": false,
+        "SOCKETCLUSTER_PROTOCOL": "https"
       }
     }
   },
@@ -85,10 +95,19 @@
     "webpack-hot-middleware": "^2.13.2"
   },
   "dependencies": {
+    "connect": "3.0.1",
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
+    "minimist": "1.1.0",
     "mongodb": "^2.2.15",
     "mongoose": "^4.7.2",
-    "redis": "^2.6.3"
+    "morgan": "1.7.0",
+    "redis": "^2.6.3",
+    "sc-cluster-broker-client": "1.x.x",
+    "sc-framework-health-check": "1.x.x",
+    "sc-hot-reboot": "1.x.x",
+    "serve-static": "1.8.0",
+    "socketcluster": "^5.1.3",
+    "socketcluster-client": "^5.1.1"
   }
 }
