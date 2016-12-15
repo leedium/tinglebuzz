@@ -1,16 +1,15 @@
 /* eslint-disable no-console */
 import colors from 'colors';
 import mongoose from 'mongoose';
-
 mongoose.Promise = global.Promise;
-
-export const MongodbConnect = () =>
+export const MongodbConnect = (url = process.env.MONGODB_URL) =>
   new Promise((resolve, reject) => {
-    mongoose.connect(process.env.MONGODB_URL, (err) => {
+    mongoose.connect(url, (err) => {
       if (err) {
-        return reject();
+        console.log(err);
+        return reject(err);
       }
-      return resolve();
+      return resolve(mongoose);
     });
   });
 export default MongodbConnect;

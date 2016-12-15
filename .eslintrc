@@ -1,9 +1,11 @@
 {
   "globals": {
-    "document": true,
-    "window": true,
-    "process": true,
-    "__dirname": true
+
+  },
+  "env": {
+    "node": true,
+    "browser": true,
+    "mocha": true
   },
   "extends": ["airbnb"],
   "rules": {
