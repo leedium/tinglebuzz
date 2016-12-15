@@ -7,25 +7,22 @@ import express from 'express';
 import httpProxy from 'http-proxy';
 import bodyparser from 'body-parser';
 
-let proxy = null;
-const ssl = {
-  key: fs.readFileSync(path.join(__dirname,'../../../', process.env.SSL_KEY)),
-  cert: fs.readFileSync(path.join(__dirname,'../../../', process.env.SSL_CERT,)),
-};
-if (process.env.NODE_ENV === 'development') {
-  proxy = httpProxy.createServer({
-    changeOrigin: true,
-    ws: true,
-    ssl,
-  });
-}
-
 const RESTServer = () =>
   new Promise((resolve, reject) => {
     const app = express();
     const port = process.env.REST_PORT || 3001;
-
-
+    let proxy;
+    const ssl = {
+      key: fs.readFileSync(path.join(__dirname, '../../../', process.env.SSL_KEY)),
+      cert: fs.readFileSync(path.join(__dirname, '../../../', process.env.SSL_CERT)),
+    };
+    if (process.env.NODE_ENV === 'development') {
+      proxy = httpProxy.createServer({
+        changeOrigin: true,
+        ws: true,
+        ssl,
+      });
+    }
     app.use(bodyparser.json());
 
     if (process.env.NODE_ENV === 'development') {
@@ -53,5 +50,4 @@ const RESTServer = () =>
       });
   });
 
-export { proxy };
 export default RESTServer;

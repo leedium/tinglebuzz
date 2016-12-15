@@ -1,7 +1,8 @@
 const webpack  = require('webpack');
 const path  = require('path');
-const clientEntry = path.resolve(__dirname, '../src/client/app.js');
+const clientEntry = path.resolve(__dirname, '../src/client/app.jsx');
 const distDir = path.resolve(__dirname, '../dist');
+const src = '../src';
 
 module.exports = {
   entry: {
@@ -11,6 +12,15 @@ module.exports = {
     path: distDir,
     publicPath: '/',
     filename: '[name].bundle.js'
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(js|jsx)$/,
+        include: path.resolve(__dirname, src),
+        use: 'babel-loader'
+      },
+    ]
   },
   target: "web",
   plugins:[

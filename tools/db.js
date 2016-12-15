@@ -40,7 +40,9 @@ export const startMongo = () => {
 const startServers = async () => {
     try {
      // await startRedis();
+      console.log(1);
       await startMongo();
+      console.log(2);
       return Promise.resolve();
     } catch(err) {
       throw new Error(err);

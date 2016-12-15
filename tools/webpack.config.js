@@ -24,7 +24,8 @@ function config() {
   }else{
     config =  prodConfig
   }
-  return Object.assign({}, config, commonProperties);
+  // return Object.assign({}, config, commonProperties);
+   return config;
 }
 
 module.exports = config;

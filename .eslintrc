@@ -1,5 +1,7 @@
 {
   "globals": {
+    "document": true,
+    "window": true,
     "process": true,
     "__dirname": true
   },

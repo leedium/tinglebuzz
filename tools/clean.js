@@ -4,13 +4,13 @@ import path from 'path';
 
 const clean = () => {
   const delPaths = [
-    path.resolve(__dirname,'../build/**/*'),
+    path.resolve(__dirname,'../dump.rdb'),
     path.resolve(__dirname,'../dist/**/*')
   ];
   console.log('cleaning...'.yellow);
   return new Promise((resolve, reject) => {
     del(delPaths).then((paths) => {
-      console.log('clean completed.'.green);
+      console.log('clean completed.'.green,paths);
       resolve();
     }, reject);
   });
