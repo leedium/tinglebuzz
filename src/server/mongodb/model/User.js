@@ -1,12 +1,20 @@
 import mongoose from 'mongoose';
 import validator from 'validator';
+import { validateType } from '../../../api/types/UserType';
 
 const userSchema = new mongoose.Schema({
+  type: {
+    required: true,
+    type: String,
+    validate: {
+      validator: validateType,
+    },
+  },
   email: {
     type: String,
     required: true,
     trim: true,
-    minlength: 8,
+    minlength: 1,
     unique: true,
     validate: {
       validator: validator.isEmail,
@@ -16,10 +24,14 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     require: true,
-    minlength: 6,
+    minlength: 8,
   },
   fname: String,
   lname: String,
+  posts: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Post',
+  }],
   tokens: [{
     access: {
       type: String,
@@ -32,11 +44,10 @@ const userSchema = new mongoose.Schema({
   }],
 });
 
-let u;
+let user;
 try {
-  u = mongoose.model('User');
+  user = mongoose.model('User');
 } catch (err) {
-  u = mongoose.model('User', userSchema);
+  user = mongoose.model('User', userSchema);
 }
-const User = u;
-export default User;
+export default user;
