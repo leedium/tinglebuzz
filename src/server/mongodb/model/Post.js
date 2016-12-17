@@ -21,6 +21,12 @@ const PostSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  latlng: {
+    type: Object,
+  },
+  icon: {
+    type: String,
+  },
 });
 
 let post;

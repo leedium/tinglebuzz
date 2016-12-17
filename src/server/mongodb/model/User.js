@@ -1,8 +1,9 @@
+import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import validator from 'validator';
 import { validateType } from '../../../api/types/UserType';
 
-const userSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
   type: {
     required: true,
     type: String,
@@ -26,6 +27,11 @@ const userSchema = new mongoose.Schema({
     require: true,
     minlength: 8,
   },
+  username: {
+    type: String,
+    required: true,
+    minlength: 8,
+  },
   fname: String,
   lname: String,
   posts: [{
@@ -44,10 +50,34 @@ const userSchema = new mongoose.Schema({
   }],
 });
 
+UserSchema.methods.toJSON = function () {
+  let {_id, email, username } = this.toObject();
+  return {
+    _id,
+    email,
+    username,
+  };
+};
+
+UserSchema.methods.generateUserAuth = function () {
+  const user = this;
+  const access = 'auth';
+  const token = jwt.sign({
+    id: user._id.toHexString(),
+    password: user.password,
+    access,
+  }, '1234abc');
+  user.tokens.push({
+    access,
+    token,
+  });
+  return user;
+}
+
 let user;
 try {
   user = mongoose.model('User');
 } catch (err) {
-  user = mongoose.model('User', userSchema);
+  user = mongoose.model('User', UserSchema);
 }
 export default user;

@@ -6,6 +6,7 @@ import colors from 'colors';
 import express from 'express';
 import httpProxy from 'http-proxy';
 import bodyparser from 'body-parser';
+import routes from './routes';
 
 const RESTServer = () =>
   new Promise((resolve, reject) => {
@@ -38,9 +39,7 @@ const RESTServer = () =>
       });
     }
 
-    app.post('/login', (req, res) => {
-      res.json({ ok: true });
-    });
+    app.use(routes);
 
     https.createServer(ssl, app)
       .listen(process.env.REST_PORT, (err) => {
