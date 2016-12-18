@@ -8,6 +8,10 @@ sudo apt-get install -y  build-essential tcl
 
 sudo npm i nodemon -g
 
+# if [ -d "/vagrant/node_modules" ]; then
+#    echo 'folder exists'
+# fi
+
 #redis
 sudo apt-get install -y python-software-properties
 sudo add-apt-repository -y ppa:rwky/redis

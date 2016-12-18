@@ -1,11 +1,12 @@
 import expect from 'expect';
 import { ObjectID } from 'mongodb';
 
-import { createPost, createUser } from '../model/helpers';
+import { createPost } from '../model/helpers';
 import mongodbConnect from '../mongodb-connect';
 import User from '../model/User';
 import Post from '../model/Post';
 import UserType from '../../../api/types/UserType';
+import { addUser, findUserById, updateUser, removeUser } from '../../../api/user-api';
 
 let mongoose;
 const user1ID = new ObjectID();
@@ -14,65 +15,66 @@ const user3ID = new ObjectID();
 const postID = new ObjectID();
 
 //  lifecycle methods
-before((done) => {
-  mongodbConnect().then((db) => {
-    const users = [
-      createUser(user2ID, UserType.business, 'poo@poo.com', '362y32hjh3', 'leedium22', 'Ruth'),
-      createUser(user3ID, UserType.guest, 'poo1@poo1.com', '362y32hjh3', 'leedium23', 'Christine'),
-    ];
-
-    mongoose = db;
-    Post.remove({}).then(() => {
-      User.remove({}).then(() => {
-        User.insertMany(users).then(() => done(), err => err);
-      });
+const startMongo = (done) => {
+    mongodbConnect().then((db) => {
+      mongoose = db;
+      Promise.all([
+        Post.remove({}),
+        User.remove({}),
+        addUser({_id: user2ID, type: UserType.business, email: 'poo@poo.com', password: '362y32hjh3', username: 'leedium22', fname: 'Ruth'}),
+        addUser({_id: user3ID, type: UserType.guest, email: 'poo1@poo1.com', password: '362y32hjh3', username: 'leedium23', fname: 'Christine'}),
+      ]).then(() => {
+        done();
+      }).catch(err => err);
     });
-  });
-});
+}
 
-after((done) => {
+const stopMongo = (done) => {
   mongoose.connection.close();
   done();
-});
+}
 //  end lifecycle;
 
 describe('MongoDB User CRUD', () => {
-  it('Should SAVE a User with JWT Token', () => {
-    const newUser = createUser(user1ID);
-    return newUser.save().then((user) => {
-      expect(user.tokens.length > 0).toBe(true);
-      expect(user.email).toBe(newUser.email);
-      return user.toJSON();
-    });
-  });
+  before(startMongo);
+  after(stopMongo);
 
-  it('Should VALIDATE User by Token', () => {
-
-  });
+  it('Should SAVE a User with JWT Token', () =>
+    addUser({
+      _id: user1ID,
+      type: UserType.business,
+      email: 'leedium@poo.com',
+      password: '362y32hjh3',
+      username: 'leedium2233',
+      fname: 'David',
+      lname: 'Lee',
+    }).then(({ user, token }) =>
+      expect(user.email).toBe('leedium@poo.com')));
 
   it('Should FIND a User by ID', () =>
-    User.findById(user1ID.toString()).then(doc =>
-      expect(doc).toNotBe(null)));
+    findUserById(user1ID.toString()).then(doc =>
+        expect(doc).toNotBe(null)));
 
   it('Should UPDATE a User', () => {
     const fname = 'Cals';
     const lname = 'Lee-Chin';
-    return User.findByIdAndUpdate(user1ID,
+    return updateUser(user1ID.toString(),
       {
         fname,
         lname,
       },
-      { new: true },
     ).then(doc => expect(doc.fname).toEqual(fname));
   });
 
   it('Should REMOVE a User', () =>
-    User.findByIdAndRemove(user1ID.toString()).then((doc) => {
-      expect(doc).toNotBe(null);
-    }));
+    removeUser(user1ID.toString()).then(doc =>
+      expect(doc).toNotBe(null)));
 });
 
 describe('MongoDB Post (Buzz) CRUD', () => {
+  before(startMongo);
+  after(stopMongo);
+
   it(`Should CREATE a Post: by User: ${user2ID}`, () =>
     //  find a user and return non secure information
     User.findById(user2ID.toString()).then((user) => {

@@ -51,7 +51,7 @@ const UserSchema = new mongoose.Schema({
 });
 
 UserSchema.methods.toJSON = function () {
-  let {_id, email, username } = this.toObject();
+  let { _id, email, username } = this.toObject();
   return {
     _id,
     email,
@@ -71,8 +71,12 @@ UserSchema.methods.generateUserAuth = function () {
     access,
     token,
   });
-  return user;
-}
+  return { user, token };
+};
+
+UserSchema.statics.findByToken = function(token){
+
+};
 
 let user;
 try {
