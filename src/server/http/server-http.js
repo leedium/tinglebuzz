@@ -3,7 +3,6 @@ import http from 'http';
 import https from 'https';
 import fs from 'fs';
 import path from 'path';
-import colors from 'colors';
 import express from 'express';
 import httpProxy from 'http-proxy';
 import bodyparser from 'body-parser';
@@ -14,9 +13,7 @@ const RESTServer = () =>
     const app = express();
     const port = process.env.REST_PORT || 3001;
     let proxy;
-    let ssl = {}
-
-    ssl = {
+    const ssl = {
       key: fs.readFileSync(path.join(__dirname, '../../../', process.env.SSL_KEY || 'ssl/client-key.pem')),
       cert: fs.readFileSync(path.join(__dirname, '../../../', process.env.SSL_CERT || 'ssl/client-cert.pem')),
     };
@@ -38,7 +35,7 @@ const RESTServer = () =>
       const server = https.createServer(ssl, app)
         .listen(port, (err) => {
           if (err) { return reject(err); }
-          console.log(`RESTAPI ssl server started on port: ${port}`.green);
+          //  console.log(`RESTAPI ssl server started on port: ${port}`.green);
           return resolve({
             app,
             server,
@@ -48,15 +45,13 @@ const RESTServer = () =>
       const server = http.createServer(app)
         .listen(port, (err) => {
           if (err) { return reject(err); }
-          console.log(`RESTAPI server started on port: ${port}`.green);
+          //  console.log(`RESTAPI server started on port: ${port}`.green);
           return resolve({
             app,
             server,
           });
         });
     }
-
-
   });
 
 export default RESTServer;

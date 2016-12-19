@@ -8,13 +8,14 @@ export const createPost = (owner, postObj) => {
   return newPost.save().then(post => {
     owner.posts.push(post.id);
     return {owner, post};
-  });
+  })
+  .catch((err) => {throw new Error(err);});
 };
 
 export const updatePost = (postId, postObj) => {
   return Post.findByIdAndUpdate({ _id: postId}, postObj, {new: true})
     .then(newPost => newPost)
-    .catch(err => console.log(err));
+    .catch((err) => {throw new Error(err)});
 };
 
 export const removePost = (postId) => {
@@ -26,6 +27,7 @@ export const removePost = (postId) => {
       return owner.save().then((user) => {
         return {deletedPost, user};
       });
-    });
+    })
+    .catch((err) => {throw new Error(err);});
 };
 

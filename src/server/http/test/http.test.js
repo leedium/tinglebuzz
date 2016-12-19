@@ -36,7 +36,7 @@ describe('http REST API tests', () => {
     });
   });
 
-  it('addUser - POST:/user ', (done) => {
+  it('addUser wih x-access-token header- POST:/user ', (done) => {
     request(app)
       .post('/user')
       .send({
