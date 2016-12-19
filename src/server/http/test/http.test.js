@@ -2,9 +2,11 @@ import request from 'supertest';
 import expect from 'expect';
 import {ObjectID} from 'mongodb';
 
+import UsertType from '../../../api/types/UserType'
 import httpServer from '../server-http';
+import User from '../../mongodb/model/User';
 import mongodbConnect from '../../mongodb/mongodb-connect';
-import { clearDB } from '../../mongodb/model/helpers';
+import {clearDB} from '../../mongodb/model/helpers';
 
 //  lifecycle
 describe('http REST API tests', () => {
@@ -21,7 +23,7 @@ describe('http REST API tests', () => {
       server = http.server;
       mongodbConnect().then((db) => {
         mongoose = db;
-        clearDB().then((res) => {
+        clearDB().then(() => {
           done();
         });
       });
@@ -36,17 +38,54 @@ describe('http REST API tests', () => {
     });
   });
 
-  it('addUser wih x-access-token header- POST:/user ', (done) => {
+  it('Should addUser POST:/user ', (done) => {
     request(app)
       .post('/user')
       .send({
+        type: UsertType.guest,
         username: 'Test Name',
         email: 'test@test.com',
         password: 'test password',
+        fname: 'fname1',
+        lname: 'lname1',
       })
-      .end((err, res) => {
+      .expect((res) => {
         expect(res.headers['x-access-token']).toExist();
         expect(res.body._id).toExist();
+        registeredUser = res.body._id;
+      })
+      .end(done);
+  });
+
+  it('Should find User wih x-access-token header- GET:/user ', (done) => {
+    User.findById(registeredUser, 'tokens').then((user) => {
+      request(app)
+        .get('/user')
+        .set('x-access-token', user.tokens[0].token)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body._id).toExist();
+        })
+        .end((err, res) => {
+          if (err) {
+            throw new Error(err);
+          }
+          done();
+        });
+    });
+  });
+  it('Should reject User wih invalid x-access-token header- GET:/user ', (done) => {
+    request(app)
+      .get('/user')
+      .set('x-access-token', '123456')
+      .expect(404)
+      .expect((res) => {
+        expect(res.body._id).toNotExist();
+      })
+      .end((err, res) => {
+        if (err) {
+          throw new Error(err);
+        }
         done();
       });
   });

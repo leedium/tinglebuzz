@@ -1,6 +1,8 @@
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
+import { ObjectID } from 'mongodb';
 import validator from 'validator';
+import UserType from '../../../api/types/UserType';
 import { validateType } from '../../../api/types/UserType';
 
 const UserSchema = new mongoose.Schema({
@@ -74,9 +76,59 @@ UserSchema.methods.generateUserAuth = function () {
   return { user, token };
 };
 
-UserSchema.statics.findByToken = function(token){
-
+UserSchema.statics.findByToken = function (token) {
+  const User = this;
+  let decoded;
+  try {
+    decoded = jwt.verify(token, '1234abc');
+  } catch (err) {
+    return Promise.reject(null);
+  }
+  return User.findOne({
+    _id: decoded.id,
+    'tokens.token': token,
+    'tokens.access': 'auth',
+  }, 'id email');
 };
+
+UserSchema.statics.addUser = function ({_id = new ObjectID(), type = UserType.guest, email, password, username, fname, lname}) {
+  const User = this;
+  const { user, token } = new User({
+    _id,
+    type,
+    email,
+    password,
+    username,
+    fname,
+    lname,
+    posts: [],
+  }).generateUserAuth();
+
+  return user.save().then((u) => {
+    return {
+      user: u,
+      token,
+    };
+  }).catch(err => {
+    return err;
+  });
+};
+
+
+UserSchema.statics.updateUser = function (id, payload) {
+  const User = this;
+  return User.findByIdAndUpdate(id,
+    Object.assign({},payload),
+    { new: true },
+  ).catch(err => err);
+};
+
+UserSchema.statics.removeUser = function (id) {
+  const User = this;
+  return User.findByIdAndRemove(id)
+    .catch(err => err);
+};
+
 
 let user;
 try {

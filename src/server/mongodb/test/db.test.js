@@ -3,14 +3,12 @@
 import expect from 'expect';
 import { ObjectID } from 'mongodb';
 
-
 import mongodbConnect from '../mongodb-connect';
 import {clearDB} from '../model/helpers';
 import User from '../model/User';
+import Post from '../model/Post';
 import UserType from '../../../api/types/UserType';
 import PostType from '../../../api/types/PostType';
-import {addUser, findUserById, updateUser, removeUser} from '../../../api/user-api';
-import {createPost, updatePost, removePost} from '../../../api/post-api';
 
 let mongoose;
 const user1ID = new ObjectID();
@@ -24,7 +22,7 @@ const startMongo = (done) => {
     mongoose = db;
     clearDB().then(() => {
       Promise.all([
-        addUser({
+        User.addUser({
           _id: user2ID,
           type: UserType.business,
           email: 'poo323@poo.com',
@@ -32,7 +30,7 @@ const startMongo = (done) => {
           username: 'leedium22',
           fname: 'Ruth',
         }),
-        addUser({
+        User.addUser({
           _id: user3ID,
           type: UserType.guest,
           email: 'poo12@poo1.com',
@@ -42,7 +40,7 @@ const startMongo = (done) => {
         }),
       ]).then(() => {
         done();
-      });
+      }).catch(err => {throw new Error(err)});
     });
   });
 };
@@ -62,6 +60,7 @@ describe('MongoDB User CRUD', () => {
   after(stopMongo);
 
   it('Should SAVE a User with JWT Token', () => {
+
     const newUser = {
       _id: user1ID,
       type: UserType.business,
@@ -71,18 +70,18 @@ describe('MongoDB User CRUD', () => {
       fname: 'David',
       lname: 'Lee',
     };
-    return addUser(newUser).then(({user, token}) =>
+    return User.addUser(newUser).then(({user, token}) =>
       expect(user.email).toBe(newUser.email));
   });
 
   it('Should FIND a User by ID', () =>
-    findUserById(user1ID.toString()).then(doc =>
+    User.findById(user1ID.toString()).then(doc =>
       expect(doc).toNotBe(null)));
 
   it('Should UPDATE a User', () => {
     const fname = 'Cals';
     const lname = 'Lee-Chin';
-    return updateUser(user1ID.toString(),
+    return User.updateUser(user1ID.toString(),
       {
         fname,
         lname,
@@ -91,7 +90,7 @@ describe('MongoDB User CRUD', () => {
   });
 
   it('Should REMOVE a User', () =>
-    removeUser(user1ID.toString()).then(doc =>
+    User.removeUser(user1ID.toString()).then(doc =>
       expect(doc).toNotBe(null)));
 });
 
@@ -113,7 +112,7 @@ describe('MongoDB Post (Buzz) CRUD', () => {
         expires: 0,
         icon: '',
       };
-      return createPost(user, postObj).then(({owner, post}) => {
+      return Post.createPost(user, postObj).then(({owner, post}) => {
         expect(owner.id).toEqual(user2ID.toString());
         expect(post.title).toEqual(postObj.title);
         savedPostId = post.id;
@@ -128,7 +127,7 @@ describe('MongoDB Post (Buzz) CRUD', () => {
     const latlng = {lat: 1, lng: 2};
     const type = PostType.assistance;
     const icon = 'icon.jpg';
-    return updatePost(savedPostId, {
+    return Post.updatePost(savedPostId, {
       type,
       title,
       description,
@@ -143,7 +142,7 @@ describe('MongoDB Post (Buzz) CRUD', () => {
   });
 
   it('Should REMOVE a Post', () =>
-    removePost(savedPostId).then(({deletedPost, user}) => {
+    Post.removePost(savedPostId).then(({deletedPost, user}) => {
       expect(deletedPost).toNotBe(null);
       expect(user.posts.indexOf(deletedPost.id) >= 0).toBe(false);
     }));
