@@ -1,7 +1,16 @@
 import express from 'express';
+import passport from 'passport';
+import passportUniqueToken from 'passport-unique-token';
 import User from '../mongodb/model/User';
 
 const router = express.Router();
+
+passport.use(new passportUniqueToken({
+    tokenHeader: 'x-access-token'
+  },
+  (token, done) => {
+
+  }));
 
 router.use((req, res, next) => {
   next();
@@ -16,13 +25,14 @@ router.get('/user', (req, res) => {
     res
       .status(200)
       .send(user);
-
   }).catch((err) => {
     res
       .status(404)
       .send(null);
   });
 });
+
+router.get('/auth/user', passportUniqueToken)
 
 router.post('/user', (req, res) => {
   const {type, username, password, email} = req.body;
