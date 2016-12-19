@@ -9,6 +9,7 @@
   },
   "extends": ["airbnb"],
   "rules": {
+    "object-curly-spacing": "off",
     "import/no-extraneous-dependencies": 0,
     "no-unused-vars": 0
   }

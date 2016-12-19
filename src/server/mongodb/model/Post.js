@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { validateType } from '../../../api/types/PostType';
+import {validateType} from '../../../api/types/PostType';
 
 const PostSchema = new mongoose.Schema({
   owner: {
@@ -23,6 +23,9 @@ const PostSchema = new mongoose.Schema({
   },
   latlng: {
     type: Object,
+  },
+  expires: {
+    type: Number,
   },
   icon: {
     type: String,

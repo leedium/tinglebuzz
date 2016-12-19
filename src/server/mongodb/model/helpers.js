@@ -5,6 +5,12 @@ import PostType from '../../../api/types/PostType';
 import User from './User';
 import Post from './Post';
 
+export const clearDB = () =>
+  Promise.all([
+    User.remove({}),
+    Post.remove({}),
+  ]);
+
 //  helpers
 export const createUser = (_id = new ObjectID(), type = UserType.member, email = 'leedium@me.com', password = '12345678', username = 'leedium234', fname = 'David', lname = 'Lee', posts = []) =>
   new User({

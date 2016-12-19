@@ -19,10 +19,9 @@ export const addUser = ({_id = new ObjectID, type = UserType.guest, email, passw
     return {
       user: u,
       token,
-    }; //.toJSON();
+    };
   }).catch(err => {
-    console.log(err);
-    return err
+    return err;
   });
 };
 

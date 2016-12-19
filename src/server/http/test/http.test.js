@@ -1,11 +1,10 @@
 import request from 'supertest';
 import expect from 'expect';
-import { ObjectID } from 'mongodb';
+import {ObjectID} from 'mongodb';
 
 import httpServer from '../server-http';
 import mongodbConnect from '../../mongodb/mongodb-connect';
-import UserType from '../../../api/types/UserType';
-import { addUser } from '../../../api/user-api';
+import { clearDB } from '../../mongodb/model/helpers';
 
 //  lifecycle
 describe('http REST API tests', () => {
@@ -16,31 +15,25 @@ describe('http REST API tests', () => {
   const userID = new ObjectID();
 
   before((done) => {
-      httpServer().then((http) => {
-        app = http.app;
-        server = http.server;
-        mongodbConnect().then((db) => {
-          mongoose = db;
-          addUser({
-            _id: userID,
-            type: UserType.business,
-            email: 'leedium@poo.com',
-            password: '362y32hjh3',
-            username: 'leedium2233',
-            fname: 'David',
-            lname: 'Lee',
-          }).then(({ user }) => {
-            registeredUser = user;
-            done();
-          });
+    console.log('=============================>');
+    httpServer().then((http) => {
+      app = http.app;
+      server = http.server;
+      mongodbConnect().then((db) => {
+        mongoose = db;
+        clearDB().then((res) => {
+          done();
         });
       });
+    });
   });
 
   after((done) => {
-    mongoose.connection.close();
-    server.close();
-    done();
+    clearDB().then((res) => {
+      mongoose.connection.close();
+      server.close();
+      done();
+    });
   });
 
   it('addUser - POST:/user ', (done) => {
