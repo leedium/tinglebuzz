@@ -2,6 +2,8 @@ import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import { ObjectID } from 'mongodb';
 import validator from 'validator';
+import bcrypt from 'bcryptjs';
+
 import UserType from '../../../api/types/UserType';
 import { validateType } from '../../../api/types/UserType';
 
@@ -129,6 +131,20 @@ UserSchema.statics.removeUser = function (id) {
     .catch(err => err);
 };
 
+//
+UserSchema.pre('save', function (next) {
+  const user = this;
+  if (user.isModified('password')) {
+    bcrypt.genSalt(10).then( (salt) => {
+       bcrypt.hash( user.password, salt).then((hash) => {
+         user.password = hash;
+         next();
+       });
+    }).catch( err => console.log(err));
+  }else{
+    next();
+  }
+});
 
 let user;
 try {

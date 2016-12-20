@@ -57,7 +57,11 @@ const stopMongo = (done) => {
 
 describe('MongoDB User CRUD', () => {
   before(startMongo);
-  after(stopMongo);
+  after((done) => {
+    mongoose.connection.close();
+    console.log('=============================>');
+    done();
+  });
 
   it('Should SAVE a User with JWT Token', () => {
 
@@ -70,8 +74,9 @@ describe('MongoDB User CRUD', () => {
       fname: 'David',
       lname: 'Lee',
     };
-    return User.addUser(newUser).then(({user, token}) =>
-      expect(user.email).toBe(newUser.email));
+    return User.addUser(newUser).then(({user, token}) =>{
+      expect(user.email).toBe(newUser.email)
+    });
   });
 
   it('Should FIND a User by ID', () =>

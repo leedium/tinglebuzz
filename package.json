@@ -111,6 +111,7 @@
     "webpack-hot-middleware": "^2.13.2"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.0",
     "body-parser": "^1.15.2",
     "connect": "3.0.1",
     "express": "^4.14.0",

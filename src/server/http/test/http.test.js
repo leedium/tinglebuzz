@@ -1,6 +1,5 @@
 import request from 'supertest';
 import expect from 'expect';
-import passport from 'passport';
 import {ObjectID} from 'mongodb';
 
 import UsertType from '../../../api/types/UserType'
@@ -8,6 +7,19 @@ import httpServer from '../server-http';
 import User from '../../mongodb/model/User';
 import mongodbConnect from '../../mongodb/mongodb-connect';
 import {clearDB} from '../../mongodb/model/helpers';
+
+// let password = '123ssabc';
+// let salt = bcrypt.genSalt(10, (err, salt) => {
+//   bcrypt.hash(password, salt, (err, hash) => {
+//     console.log(hash)
+//   });
+// });
+
+//let hashedP = '$2a$10$TC5IvwLpTQYAxB1/1HVhf.OYlFNX6nADRtbQmZSPbmRAOFaqoSzWa';
+
+// bcrypt.compare(password, hashedP, (err, res) => {
+//   console.log(res);
+// });
 
 //  lifecycle
 describe('http REST API tests', () => {
