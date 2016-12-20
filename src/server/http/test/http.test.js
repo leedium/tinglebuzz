@@ -1,5 +1,6 @@
 import request from 'supertest';
 import expect from 'expect';
+import passport from 'passport';
 import {ObjectID} from 'mongodb';
 
 import UsertType from '../../../api/types/UserType'
@@ -74,6 +75,19 @@ describe('http REST API tests', () => {
         });
     });
   });
+
+  it('Should find User wih passport-access-token header- GET:/auth/user ', (done) => {
+    User.findById(registeredUser, 'tokens').then((user) => {
+      request(app)
+        .get('/auth/user')
+        .set('x-access-token', user.tokens[0].token)
+        .end((err, res) => {
+          expect(err).toBe(null);
+          done();
+        });
+    });
+  });
+
   it('Should reject User wih invalid x-access-token header- GET:/user ', (done) => {
     request(app)
       .get('/user')

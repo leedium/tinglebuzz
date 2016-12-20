@@ -82,13 +82,13 @@ UserSchema.statics.findByToken = function (token) {
   try {
     decoded = jwt.verify(token, '1234abc');
   } catch (err) {
-    return Promise.reject(null);
+    return Promise.reject(new Error(err));
   }
   return User.findOne({
     _id: decoded.id,
     'tokens.token': token,
     'tokens.access': 'auth',
-  }, 'id email');
+  }, 'id email').catch(err => err);
 };
 
 UserSchema.statics.addUser = function ({_id = new ObjectID(), type = UserType.guest, email, password, username, fname, lname}) {

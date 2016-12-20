@@ -5,12 +5,23 @@ import User from '../mongodb/model/User';
 
 const router = express.Router();
 
-passport.use(new passportUniqueToken({
-    tokenHeader: 'x-access-token'
-  },
-  (token, done) => {
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+passport.deserializeUser((user, done) => {
+  done(null, user);
+});
 
-  }));
+passport.use(new passportUniqueToken.Strategy({
+  tokenHeader: 'x-access-token',
+},
+(token, done) => {
+  User.findByToken(token).then((user) => {
+    return done(null, user);
+  }).catch((err) => {
+    return done(err, false);
+  });
+}));
 
 router.use((req, res, next) => {
   next();
@@ -28,11 +39,13 @@ router.get('/user', (req, res) => {
   }).catch((err) => {
     res
       .status(404)
-      .send(null);
+      .send(err);
   });
 });
 
-router.get('/auth/user', passportUniqueToken)
+router.get('/auth/user', passport.authenticate('token'), (req, res) => {
+  res.status(200).send(req.user);
+});
 
 router.post('/user', (req, res) => {
   const {type, username, password, email} = req.body;
