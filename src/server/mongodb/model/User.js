@@ -100,9 +100,17 @@ UserSchema.statics.findByCredentials = function({email, password}) {
       if(!user){
         return Promise.reject();
       }
-
       return new Promise((resolve, reject) => {
-        bcrypt.compare()
+        bcrypt.compare(password,user.password)
+          .then((valid) => {
+            if (valid) {
+              let {_id, email, username} = user;
+              return resolve({user: {_id, email, username}});
+            } else {
+              return reject({user: null});
+            }
+          })
+          .catch(reject);
       });
     });
 };

@@ -45,7 +45,7 @@ describe('http REST API tests', () => {
         type: UsertType.guest,
         username: 'Test Name',
         email: 'test@test.com',
-        password: 'test password',
+        password: 'testpassword',
         fname: 'fname1',
         lname: 'lname1',
       })
@@ -108,11 +108,24 @@ describe('http REST API tests', () => {
       .post('/user/login')
       .send({
         email: 'test@test.com',
-        password: 'test2',
+        password: 'testpassword',
       })
       .expect(200)
       .expect((res) => {
-        //console.log(res.body)
+        expect(res.body.user).toNotBe(null);
+      })
+      .end(done)
+  });
+  it('Should invalidate a user on login', (done) => {
+    request(app)
+      .post('/user/login')
+      .send({
+        email: 'test@test.com',
+        password: 'testpadjkdjkldjkssword',
+      })
+      .expect(401)
+      .expect((res) => {
+        expect(res.body.user).toBe(null);
       })
       .end(done)
   });

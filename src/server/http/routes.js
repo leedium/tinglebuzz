@@ -35,7 +35,7 @@ router.post('/user/login', (req, res) => {
   User.findByCredentials(req.body).then((user) => {
     res.status(200).send(user);
   }).catch((err) => {
-    res.status(401).send();
+    res.status(401).send({user: null});
   })
 });
 
