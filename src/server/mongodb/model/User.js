@@ -93,6 +93,20 @@ UserSchema.statics.findByToken = function (token) {
   }, 'id email').catch(err => err);
 };
 
+UserSchema.statics.findByCredentials = function({email, password}) {
+  const User = this;
+  return User.findOne({email},'password')
+    .then(user => {
+      if(!user){
+        return Promise.reject();
+      }
+
+      return new Promise((resolve, reject) => {
+        bcrypt.compare()
+      });
+    });
+};
+
 UserSchema.statics.addUser = function ({_id = new ObjectID(), type = UserType.guest, email, password, username, fname, lname}) {
   const User = this;
   const { user, token } = new User({

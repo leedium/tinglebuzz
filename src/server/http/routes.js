@@ -31,6 +31,14 @@ router.post('/version', (req, res) => {
   res.json({version: '1.0.0'});
 });
 
+router.post('/user/login', (req, res) => {
+  User.findByCredentials(req.body).then((user) => {
+    res.status(200).send(user);
+  }).catch((err) => {
+    res.status(401).send();
+  })
+});
+
 router.get('/user', (req, res) => {
   User.findByToken(req.headers['x-access-token']).then((user) => {
     res
@@ -45,6 +53,7 @@ router.get('/user', (req, res) => {
 
 router.get('/auth/user', passport.authenticate('token'), (req, res) => {
   res.status(200).send(req.user);
+
 });
 
 router.post('/user', (req, res) => {

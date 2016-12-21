@@ -8,19 +8,6 @@ import User from '../../mongodb/model/User';
 import mongodbConnect from '../../mongodb/mongodb-connect';
 import {clearDB} from '../../mongodb/model/helpers';
 
-// let password = '123ssabc';
-// let salt = bcrypt.genSalt(10, (err, salt) => {
-//   bcrypt.hash(password, salt, (err, hash) => {
-//     console.log(hash)
-//   });
-// });
-
-//let hashedP = '$2a$10$TC5IvwLpTQYAxB1/1HVhf.OYlFNX6nADRtbQmZSPbmRAOFaqoSzWa';
-
-// bcrypt.compare(password, hashedP, (err, res) => {
-//   console.log(res);
-// });
-
 //  lifecycle
 describe('http REST API tests', () => {
   let mongoose;
@@ -114,5 +101,19 @@ describe('http REST API tests', () => {
         }
         done();
       });
+  });
+
+  it('Should validate a user on login', (done) => {
+    request(app)
+      .post('/user/login')
+      .send({
+        email: 'test@test.com',
+        password: 'test2',
+      })
+      .expect(200)
+      .expect((res) => {
+        //console.log(res.body)
+      })
+      .end(done)
   });
 });
