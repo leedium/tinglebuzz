@@ -122,6 +122,7 @@
     "mongoose": "^4.7.2",
     "morgan": "1.7.0",
     "passport": "^0.3.2",
+    "passport-facebook": "^2.1.1",
     "passport-unique-token": "^0.1.4",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",

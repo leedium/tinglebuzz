@@ -75,7 +75,15 @@ UserSchema.methods.generateUserAuth = function () {
     access,
     token,
   });
-  return { user, token };
+
+  return new Promise((resolve, reject) => {
+    user.save().then((_user) => {
+      resolve({
+        user: _user,
+        token,
+      });
+    }).catch(reject);
+  });
 };
 
 UserSchema.statics.findByToken = function (token) {
@@ -95,19 +103,18 @@ UserSchema.statics.findByToken = function (token) {
 
 UserSchema.statics.findByCredentials = function({email, password}) {
   const User = this;
-  return User.findOne({email},'password')
+  return User.findOne({email},'_id email username password tokens')
     .then(user => {
       if(!user){
         return Promise.reject();
       }
       return new Promise((resolve, reject) => {
-        bcrypt.compare(password,user.password)
+        bcrypt.compare(password, user.password)
           .then((valid) => {
             if (valid) {
-              let {_id, email, username} = user;
-              return resolve({user: {_id, email, username}});
+              resolve(user);
             } else {
-              return reject({user: null});
+              reject({user: null});
             }
           })
           .catch(reject);
@@ -117,7 +124,7 @@ UserSchema.statics.findByCredentials = function({email, password}) {
 
 UserSchema.statics.addUser = function ({_id = new ObjectID(), type = UserType.guest, email, password, username, fname, lname}) {
   const User = this;
-  const { user, token } = new User({
+  return new User({
     _id,
     type,
     email,
@@ -126,16 +133,8 @@ UserSchema.statics.addUser = function ({_id = new ObjectID(), type = UserType.gu
     fname,
     lname,
     posts: [],
-  }).generateUserAuth();
-
-  return user.save().then((u) => {
-    return {
-      user: u,
-      token,
-    };
-  }).catch(err => {
-    return err;
-  });
+  }).generateUserAuth()
+    .catch((err) =>  err  );
 };
 
 
