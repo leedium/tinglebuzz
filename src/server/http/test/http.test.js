@@ -112,10 +112,12 @@ describe('http REST API tests', () => {
       })
       .expect(200)
       .expect((res) => {
+        expect(res.headers['x-access-token']).toExist();
         expect(res.body).toNotBe(undefined);
       })
       .end(done);
   });
+
   it('Should invalidate a user on login', (done) => {
     request(app)
       .post('/user/login')
