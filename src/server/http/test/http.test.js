@@ -1,12 +1,17 @@
 import request from 'supertest';
 import expect from 'expect';
 import {ObjectID} from 'mongodb';
-
-import UsertType from '../../../api/types/UserType'
+import UsertType from '../../../api/types/UserType';
 import httpServer from '../server-http';
 import User from '../../mongodb/model/User';
 import mongodbConnect from '../../mongodb/mongodb-connect';
 import {clearDB} from '../../mongodb/model/helpers';
+
+const Browser =  require('zombie');
+
+const FBAccessToken = 'EAAC5HjuVFUsBAKGHgESRLJrDXmAAqJM8IvP57CxcqNzB93HKjHCxrgJXiCyNUNIwpJjq6OLZCe1ZBmhvEZAqwLakpwldiIh3pKB4hZBwdaSam7g4UmcQu1YiU9nPQg9ZAbYZC6XxxmzM4vdohpHKZA47RpD1EFL1YkZD'
+const FBAppToken = '203539499783499|29qxUlbdyWRmGZj6Mgr2JFbKvqk'
+
 
 //  lifecycle
 describe('http REST API tests', () => {
@@ -15,7 +20,6 @@ describe('http REST API tests', () => {
   let app;
   let registeredUser;
   const userID = new ObjectID();
-
   before((done) => {
     console.log('=============================>');
     httpServer().then((http) => {
@@ -107,7 +111,7 @@ describe('http REST API tests', () => {
     request(app)
       .post('/user/login')
       .send({
-        email: 'test@test.com',
+        usernamePassword: 'test@test.com',
         password: 'testpassword',
       })
       .expect(200)
@@ -129,6 +133,15 @@ describe('http REST API tests', () => {
       .expect((res) => {
         expect(res.body.user).toBe(null);
       })
-      .end(done)
+      .end(done);
+  });
+
+  it('Should validate a facebook login and return a User', (done) => {
+    request(app)
+      .post('/auth/facebook/token')
+      .set('access_token', FBAccessToken)
+      .end((err, res) => {
+        done();
+      });
   });
 });

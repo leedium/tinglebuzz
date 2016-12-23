@@ -17,7 +17,6 @@ const UserSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: true,
     trim: true,
     minlength: 1,
     unique: true,
@@ -33,7 +32,6 @@ const UserSchema = new mongoose.Schema({
   },
   username: {
     type: String,
-    required: true,
     minlength: 8,
   },
   fname: String,
@@ -77,9 +75,9 @@ UserSchema.methods.generateUserAuth = function () {
   });
 
   return new Promise((resolve, reject) => {
-    user.save().then((_user) => {
+    user.save().then((user) => {
       resolve({
-        user: _user,
+        user,
         token,
       });
     }).catch(reject);
@@ -101,9 +99,9 @@ UserSchema.statics.findByToken = function (token) {
   }, 'id email').catch(err => err);
 };
 
-UserSchema.statics.findByCredentials = function({email, password}) {
+UserSchema.statics.findByCredentials = function({usernamePassword, password}) {
   const User = this;
-  return User.findOne({email},'_id email username password tokens')
+  return User.findOne({$or:[{}, {'username': usernamePassword}, {'email': usernamePassword}]},'_id email username password tokens')
     .then(user => {
       if(!user){
         return Promise.reject();
@@ -166,6 +164,7 @@ UserSchema.pre('save', function (next) {
     next();
   }
 });
+
 
 let user;
 try {
