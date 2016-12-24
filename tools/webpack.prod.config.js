@@ -1,6 +1,6 @@
 const webpack  = require('webpack');
 const path  = require('path');
-const clientEntry = path.resolve(__dirname, '../src/client/app.jsx');
+const clientEntry = path.resolve(__dirname, '../src/client/js/index.js');
 const distDir = path.resolve(__dirname, '../dist');
 const src = '../src';
 

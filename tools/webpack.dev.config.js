@@ -1,7 +1,7 @@
 const webpack = require('webpack');
 const path = require('path');
 const src = '../src';
-const entryClient = path.resolve(__dirname, '../src/client/app.jsx');
+const entryClient = path.resolve(__dirname, '../src/client/js/index.js');
 const distDir = path.resolve(__dirname, '../dist');
 
 module.exports = {
