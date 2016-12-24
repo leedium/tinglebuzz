@@ -53,11 +53,13 @@ const UserSchema = new mongoose.Schema({
 });
 
 UserSchema.methods.toJSON = function () {
-  let { _id, email, username } = this.toObject();
+  let { _id, email, username, fname, lname } = this.toObject();
   return {
     _id,
     email,
     username,
+    fname,
+    lname,
   };
 };
 

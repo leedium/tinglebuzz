@@ -41,7 +41,7 @@ passport.use(new FacebookTokenStrategy({
   (accessToken, refreshToken, profile, done) => {
     ProviderProfile.findOrCreate(profile).then(({user, token}) => {
       done(null, {
-        auth:user,
+        user,
         token,
       });
     }).catch((err) => {
@@ -95,14 +95,14 @@ router.get('/auth/user', passport.authenticate('token'), (req, res) => {
 });
 
 router.post('/auth/facebook/token', passport.authenticate('facebook-token'), (req, res) => {
-  res.set('x-access-token', req.user.token).send(req.auth);
+  res.set('x-access-token', req.user.token).send(req.user.user.toJSON()) ;
 });
 
 // router.get('/login/facebook', passport.authenticate('facebook'));
 
 router.get('/login/facebook/return',
   passport.authenticate('facebook', {failureRedirect: '/login'}), function (req, res) {
-    res.staus(200).send({ok: true});
+    res.stauts(200).send({ok: true});
   });
 
 

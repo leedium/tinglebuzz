@@ -141,6 +141,8 @@ describe('http REST API tests', () => {
       .post('/auth/facebook/token')
       .set('access_token', FBAccessToken)
       .end((err, res) => {
+        expect(res.body._id).toExist();
+        expect(res.header['x-access-token']).toExist();
         done();
       });
   });
