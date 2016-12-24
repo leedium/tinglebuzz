@@ -4,7 +4,7 @@
   "description": "Realtime informational assistance.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha -t 15000 --compilers js:babel-core/register src/**/*.test.js",
+    "test": "REST_PORT=3010 mocha -t 15000 --compilers js:babel-core/register src/**/*.test.js",
     "test:watch": "MONGODB_URL=mongodb://localhost:27017/tinglebuzz-test npm run test -- --watch",
     "lint": "./node_modules/.bin/esw --color --env browser,node ./src ./tools",
     "lint:watch": "npm run lint -- -w",
@@ -117,6 +117,7 @@
   "dependencies": {
     "bcryptjs": "^2.4.0",
     "body-parser": "^1.15.2",
+    "bootstrap": "^4.0.0-alpha.5",
     "connect": "3.0.1",
     "express": "^4.14.0",
     "jsonwebtoken": "^7.2.1",
