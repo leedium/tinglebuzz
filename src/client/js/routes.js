@@ -3,12 +3,13 @@ import React from 'react';
 import {Route, IndexRoute} from 'react-router';
 
 import App from './components/App';
-import Home from './components/home/Home';
+import HomePage from './components/homepage/HomePage';
+import AboutPage from './components/aboutpage/AboutPage';
 
-const routes = (
+export default (
   <Route path="/" component={App}>
-    <IndexRoute path="/home" component={Home} />
+    <IndexRoute component={HomePage} />
+    <Route path="/about" component={AboutPage} />
   </Route>
 );
 
-export default routes;
