@@ -61,6 +61,8 @@ router.post('/version', (req, res) => {
   res.json({version: '1.0.0'});
 });
 
+
+
 router.post('/user/login', (req, res) => {
   User.findByCredentials(req.body).then((foundUser) => {
     foundUser.generateUserAuth().then(({user, token}) => {
