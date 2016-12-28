@@ -35,59 +35,24 @@ const RESTServer = () =>
         ssl,
       });
 
-      app.get('*', (req, res) => {
-        match({routes, location: req.url}, (err, redirectLocation, renderProps) => {
-          // in case of error display the error message
-          if (err) {
-            return res.status(500).send(err.message);
-          }
-
-          // in case of redirect propagate the redirect to the browser
-          if (redirectLocation) {
-            return res.redirect(302, redirectLocation.pathname + redirectLocation.search);
-          }
-
-          // generate the React markup for the current route
-          let markup;
-          if (renderProps) {
-            // if the current route matched we have renderProps
-            markup = ReactDOMServer(<RouterContext {...renderProps} />);
-          } else {
-            // otherwise we can render a 404 page
-            markup = ReactDOMServer(<div>not found</div>);
-            res.status(404);
-          }
-
-          // render the index template with the embedded React markup
-          return res.render('index', {markup});
-        });
-      });
-
-      app.get('/', (req, res) => {
-        proxy.web(req, res, {
-          target: 'http://localhost:3000',
-        });
-      });
-
       app.get('/__webpack_hmr', (req, res) => {
         proxy.web(req, res, {
           target: 'http://localhost:3000',
         });
       });
 
-      app.get('/app.bundle.js', (req, res) => {
+      app.get('*', (req, res) => {
         proxy.web(req, res, {
           target: 'http://localhost:3000',
         });
       });
-
-      app.use(routes);
 
       const server = https.createServer(ssl, app)
         .listen(port, (err) => {
           if (err) {
             return reject(err);
           }
+          console.log('https proxy started: 3001')
           return resolve({
             app,
             server,

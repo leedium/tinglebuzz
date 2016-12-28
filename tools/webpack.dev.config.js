@@ -6,15 +6,20 @@ const distDir = path.resolve(__dirname, '../dist');
 
 module.exports = {
   entry: [
-    entryClient,
+    'react-hot-loader/patch',
     'webpack-hot-middleware/client?reload=true',
+    entryClient,
   ],
   module: {
     rules: [
       {
         test: /\.(js|jsx)$/,
         include: path.resolve(__dirname, src),
-        use: ['react-hot-loader','babel-loader']
+        use: ['babel-loader'],
+        query: {
+          cacheDirectory: true,
+        }
+
       },
     ]
   },
@@ -25,8 +30,8 @@ module.exports = {
   },
   target: "web",
   plugins:[
-    new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.HotModuleReplacementPlugin(),
+    new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.NoErrorsPlugin(),
   ]
 }
