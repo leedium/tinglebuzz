@@ -34,6 +34,11 @@ const client = () => {
       app.use(webpackHotmiddleware(compiler,middlewareConfig));
 
       app.get('*', (req, res) => {
+        res.render('index',{});
+      })
+
+      //Isomorphic
+      /*app.get('*', (req, res) => {
         match({routes, location: req.url}, (err, redirectLocation, renderProps) => {
           // in case of error display the error message
           if (err) {
@@ -60,7 +65,7 @@ const client = () => {
           // render the index template with the embedded React markup
           return res.render('index', {markup});
         });
-      });
+      });*/
 
       app.listen(port, (err) => {
         if(err){
