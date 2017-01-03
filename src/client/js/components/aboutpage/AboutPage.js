@@ -1,6 +1,6 @@
 import React from 'react';
 
-class AboutPage extends React.Component {
+class AboutPage extends React.PureComponent {
   render() {
     return (
       <div>

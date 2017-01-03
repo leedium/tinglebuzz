@@ -1,4 +1,7 @@
 import React from 'react';
+import {connect} from 'react-redux';
+
+import userActions from '../../../../api/actions/userActions'
 
 class Home extends React.Component {
   render() {
@@ -10,4 +13,10 @@ class Home extends React.Component {
   }
 }
 
-export default Home;
+function mapStateToProps(state){
+  return {
+    user: state.user,
+  };
+}
+
+export default connect(mapStateToProps, userActions)(Home);
