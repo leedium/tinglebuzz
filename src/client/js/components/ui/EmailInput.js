@@ -8,15 +8,15 @@ class EmailInput extends InputField {
       valid: '',
     }
     this.onTextBlur = this.onTextBlur.bind(this);
-    this.onChange = this.onChange.bind(this);
+    this.onValueChange = this.onValueChange.bind(this);
   }
 
   validateEmail() {
     return false;
   }
 
-  onChange(e) {
-    this.props.onChange(e);
+  onValueChange(e) {
+    this.props.onValueChange(e);
   }
 
   onTextBlur(e) {
@@ -33,7 +33,7 @@ class EmailInput extends InputField {
       <div className={classes}>
         <label htmlFor="email">Email</label>
         <input value={this.props.value} type="email" placeholder="email@address.com" name="email"
-               onBlur={this.onTextBlur} onChange={this.onChange}/>
+               onBlur={this.onTextBlur} onChange={this.onValueChange}/>
         <div className="error"><span>{this.props.error}</span></div>
       </div>
     );

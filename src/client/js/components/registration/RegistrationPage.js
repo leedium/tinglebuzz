@@ -1,25 +1,40 @@
 import React from 'react';
 
+import ReduxComponent from '../ReduxComponent';
 import InputField from '../ui/InputField';
 import EmailInput from '../ui/EmailInput';
-import ReduxComponent from '../ReduxComponent';
+import PasswordInput from '../ui/PasswordInput';
 
 class RegistrationPage extends ReduxComponent {
   constructor(props, context) {
     super(props, context);
-    this.onInputChange = this.onInputChange.bind(this);
+    this.state = {
+      form: {
+        email: '',
+        username: '',
+        password: '',
+      },
+    };
+    this.onValueChange = this.onValueChange.bind(this);
+
   }
 
-  onInputChange(e) {
-
+  onValueChange(e) {
+    this.setState({
+      form: Object.assign({}, this.state.form, {
+        [e.target.name]: e.target.value,
+      }),
+    });
   }
 
   render() {
+    const {email, username} = this.state.form
     return (
       <div className="registration-page">
         <form>
-          <EmailInput error="" type="" value="" name="" label="Email" placeholder="" onChange={this.onInputChange} />
-          <InputField error="" type="text" value="" name="username" label="Username" placeholder="Username" onChange={this.onInputChange} />
+          <EmailInput error="" type="" value={email} name="" label="Email" placeholder="" onValueChange={this.onValueChange} />
+          <InputField error="" type="text" value={username} name="username" label="Username" placeholder="Username" onValueChange={this.onValueChange} />
+          <PasswordInput viewstate="verify" label1="Password" label2="Verify Password" onValueChange={this.onValueChange}/>
         </form>
       </div>
     );

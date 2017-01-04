@@ -9,7 +9,7 @@ import ReduxComponent from '../ReduxComponent';
 class LoginPage extends ReduxComponent {
   constructor(props, context){
     super(props, context);
-    this.onTextChange = this.onTextChange.bind(this);
+    this.onValueChange = this.onValueChange.bind(this);
     this.state = {
       form: {
         email: '',
@@ -23,7 +23,7 @@ class LoginPage extends ReduxComponent {
     };
   }
 
-  onTextChange(e) {
+  onValueChange(e) {
     this.setState({
       form: Object.assign({},this.state.form,{
         [e.target.name]: e.target.value,
@@ -35,8 +35,8 @@ class LoginPage extends ReduxComponent {
     return (
       <div>
         <form>
-          <EmailInput error={this.state.errors.email} value={this.state.form.email} placeholder="" type="" name="" label="" onChange={this.onTextChange} />
-          <InputField error={this.state.errors.password} value={this.state.form.password} placeholder="" type="password" name="password" label="Password" onChange={this.onTextChange} />
+          <EmailInput error={this.state.errors.email} value={this.state.form.email} placeholder="" type="" name="" label="" onValueChange={this.onValueChange} />
+          <InputField error={this.state.errors.password} value={this.state.form.password} placeholder="" type="password" name="password" label="Password" onValueChange={this.onValueChange} />
           <button onClick={this.onLogin}>login</button>
         </form>
         <p>Not a member? <Link to="/register">Register here</Link></p>

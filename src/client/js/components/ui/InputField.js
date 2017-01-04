@@ -16,7 +16,7 @@ class InputField extends React.Component {
     return (
       <div className="input-field">
         <label htmlFor={this.props.name}>{this.props.label}</label>
-        <input value={this.props.value} type={this.props.type} placeholder={this.props.placeholder} name={this.props.name} onChange={this.props.onChange} />
+        <input value={this.props.value} type={this.props.type} placeholder={this.props.placeholder} name={this.props.name} onChange={this.props.onValueChange} />
         <div className="error"><span>{this.props.error}</span></div>
       </div>
     );
@@ -29,7 +29,7 @@ InputField.propTypes = {
   label: React.PropTypes.string.isRequired,
   value: React.PropTypes.string.isRequired,
   placeholder: React.PropTypes.string.isRequired,
-  onChange: React.PropTypes.func.isRequired,
+  onValueChange: React.PropTypes.func.isRequired,
   error: React.PropTypes.string.isRequired,
 };
 
