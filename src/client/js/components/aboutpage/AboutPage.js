@@ -3,7 +3,7 @@ import React from 'react';
 class AboutPage extends React.PureComponent {
   render() {
     return (
-      <div>
+      <div className="about-page">
         This is the About Page you know
       </div>
     );

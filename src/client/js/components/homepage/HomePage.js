@@ -6,7 +6,7 @@ import userActions from '../../../../api/actions/userActions'
 class Home extends React.Component {
   render() {
     return (
-      <div>
+      <div className="home-page">
         This is the Home Page
       </div>
     );

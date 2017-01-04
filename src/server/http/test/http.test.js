@@ -20,6 +20,16 @@ describe('http REST API tests', () => {
   let app;
   let registeredUser;
   const userID = new ObjectID();
+
+  const aUser = {
+    type: UsertType.guest,
+    username: 'Test Name D',
+    email: 'test@test.com',
+    password: 'testpassword',
+    fname: 'fname1',
+    lname: 'lname1',
+  }
+
   before((done) => {
     console.log('=============================>');
     httpServer().then((http) => {
@@ -45,21 +55,26 @@ describe('http REST API tests', () => {
   it('Should addUser POST:/user ', (done) => {
     request(app)
       .post('/user')
-      .send({
-        type: UsertType.guest,
-        username: 'Test Name',
-        email: 'test@test.com',
-        password: 'testpassword',
-        fname: 'fname1',
-        lname: 'lname1',
-      })
+      .send(aUser)
       .expect((res) => {
         expect(res.headers['x-access-token']).toExist();
         expect(res.body._id).toExist();
+        expect(res.body.err).toNotExist();
         registeredUser = res.body._id;
       })
       .end(done);
   });
+
+  it('should reject a User that already exists with same email or username', (done) => {
+    request(app)
+      .post('/user')
+      .send(aUser)
+      .expect((res) => {
+        expect(res.body.err).toExist();
+      })
+      .end(done);
+  });
+
 
   it('Should find User wih x-access-token header- GET:/user ', (done) => {
     User.findById(registeredUser, 'tokens').then((user) => {

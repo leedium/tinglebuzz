@@ -32,6 +32,7 @@ const UserSchema = new mongoose.Schema({
   },
   username: {
     type: String,
+    unique: true,
     minlength: 8,
   },
   fname: String,
@@ -82,7 +83,9 @@ UserSchema.methods.generateUserAuth = function () {
         user,
         token,
       });
-    }).catch(reject);
+    }).catch((err) => {
+      reject(err);
+    });
   });
 };
 
@@ -133,8 +136,7 @@ UserSchema.statics.addUser = function ({_id = new ObjectID(), type = UserType.gu
     fname,
     lname,
     posts: [],
-  }).generateUserAuth()
-    .catch((err) =>  err  );
+  }).generateUserAuth();
 };
 
 

@@ -111,6 +111,13 @@ router.post('/user', (req, res) => {
   }).then(({user, token}) => {
     res.header('x-access-token', token)
       .send(user.toJSON());
+  }).catch((err) => {
+    res.send({
+      err: {
+        code: err.code,
+        message: err.errmsg,
+      },
+    });
   });
 });
 

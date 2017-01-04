@@ -1,7 +1,9 @@
 import React from 'react';
+import {Link} from 'react-router';
 import {connect} from 'react-redux';
 
 import InputField from '../ui/InputField';
+import EmailInput from '../ui/EmailInput';
 import ReduxComponent from '../ReduxComponent';
 
 class LoginPage extends ReduxComponent {
@@ -9,14 +11,23 @@ class LoginPage extends ReduxComponent {
     super(props, context);
     this.onTextChange = this.onTextChange.bind(this);
     this.state = {
-      email: '',
-      password: '',
+      form: {
+        email: '',
+        password: '',
+        isValid: false,
+      },
+      errors: {
+        email: '',
+        password: '',
+      },
     };
   }
 
-  onTextChange (e) {
+  onTextChange(e) {
     this.setState({
-      [e.target.name] : e.target.value
+      form: Object.assign({},this.state.form,{
+        [e.target.name]: e.target.value,
+      }),
     });
   }
 
@@ -24,10 +35,11 @@ class LoginPage extends ReduxComponent {
     return (
       <div>
         <form>
-          <InputField placeholder="email@email.com" type="email" name="email" label="Email" onTextChange={this.onTextChange}/>
-          <InputField placeholder="" type="password" name="password" label="Password" onTextChange={this.onTextChange}/>
+          <EmailInput error={this.state.errors.email} value={this.state.form.email} placeholder="" type="" name="" label="" onChange={this.onTextChange} />
+          <InputField error={this.state.errors.password} value={this.state.form.password} placeholder="" type="password" name="password" label="Password" onChange={this.onTextChange} />
           <button onClick={this.onLogin}>login</button>
         </form>
+        <p>Not a member? <Link to="/register">Register here</Link></p>
       </div>
     );
   }
