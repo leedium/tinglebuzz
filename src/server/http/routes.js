@@ -1,4 +1,6 @@
 import express from 'express';
+import braintree from 'braintree';
+
 import passport from 'passport';
 import PassportUniqueToken from 'passport-unique-token';
 import FacebookTokenStrategy from 'passport-facebook-token';
@@ -7,6 +9,13 @@ import User from '../mongodb/model/User';
 import ProviderProfile from '../mongodb/model/ProviderProfile';
 
 const router = express.Router();
+
+const gateway = braintree.connect({
+  environment: braintree.Environment.Sandbox,
+  merchantId: 'bc8gdz3g38wwx7nv',
+  publicKey: '6vwkfbmrtktzjf5q',
+  privateKey: '08e4b2ebf8f4f77874ef9855a13afde7',
+});
 
 passport.serializeUser((user, done) => {
   done(null, user);
@@ -85,22 +94,6 @@ router.get('/user', (req, res) => {
   });
 });
 
-router.get('/auth/user', passport.authenticate('token'), (req, res) => {
-  res.status(200).send(req.user);
-});
-
-router.post('/auth/facebook/token', passport.authenticate('facebook-token'), (req, res) => {
-  res.set('x-access-token', req.user.token).send(req.user.user.toJSON());
-});
-
-// router.get('/login/facebook', passport.authenticate('facebook'));
-
-router.get('/login/facebook/return',
-  passport.authenticate('facebook', {failureRedirect: '/login'}), (req, res) => {
-    res.stauts(200).send({ok: true});
-  });
-
-
 router.post('/user', (req, res) => {
   const {type, username, password, email} = req.body;
   User.addUser({
@@ -118,6 +111,27 @@ router.post('/user', (req, res) => {
         message: err.errmsg,
       },
     });
+  });
+});
+
+//  Facebook Auth
+router.get('/auth/user', passport.authenticate('token'), (req, res) => {
+  res.status(200).send(req.user);
+});
+
+router.post('/auth/facebook/token', passport.authenticate('facebook-token'), (req, res) => {
+  res.set('x-access-token', req.user.token).send(req.user.user.toJSON());
+});
+
+router.get('/login/facebook/return',
+  passport.authenticate('facebook', {failureRedirect: '/login'}), (req, res) => {
+    res.stauts(200).send({ok: true});
+  });
+
+//  BrainTree Auth
+router.get('/payment-client-token',(req, res) => {
+  gateway.clientToken.generate({}, (err, response) => {
+    res.send({clientToken: response.clientToken});
   });
 });
 

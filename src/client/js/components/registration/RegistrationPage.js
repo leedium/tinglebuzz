@@ -28,16 +28,18 @@ class RegistrationPage extends ReduxComponent {
   }
 
   render() {
-    const {email, username} = this.state.form
     return (
       <div className="registration-page">
-        <form>
-          <EmailInput error="" type="" value={email} name="" label="Email" placeholder="" onValueChange={this.onValueChange} />
-          <InputField error="" type="text" value={username} name="username" label="Username" placeholder="Username" onValueChange={this.onValueChange} />
-          <PasswordInput viewstate="verify" label1="Password" label2="Verify Password" onValueChange={this.onValueChange}/>
+        <form action="/transaction-endpoint" method="post">
+          <fieldset>
+            <EmailInput error="" type="" value={email} name="" label="Email" placeholder="" onValueChange={this.onValueChange} />
+            <InputField error="" type="text" value={username} name="username" label="Username" placeholder="Username" onValueChange={this.onValueChange} />
+            <PasswordInput viewstate="verify" label1="Password" label2="Verify Password" onValueChange={this.onValueChange}/>
+          </fieldset>
         </form>
       </div>
     );
+    const {email, username} = this.state.form
   };
 }
 

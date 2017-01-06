@@ -161,4 +161,13 @@ describe('http REST API tests', () => {
         done();
       });
   });
+
+  it('Should send a BrainTree client token to client', (done) => {
+    request(app)
+      .get('/payment-client-token')
+      .expect((res) => {
+        expect(res.body.clientToken).toExist();
+      })
+      .end(done);
+  });
 });
