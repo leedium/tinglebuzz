@@ -129,9 +129,12 @@ router.get('/login/facebook/return',
   });
 
 //  BrainTree Auth
-router.get('/payment-client-token',(req, res) => {
+router.get('/api/payment-client-token',(req, res) => {
   gateway.clientToken.generate({}, (err, response) => {
-    res.send({clientToken: response.clientToken});
+    if (err) {
+      res.send({success: false});
+    }
+    res.send(response);
   });
 });
 

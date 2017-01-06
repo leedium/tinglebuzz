@@ -6,7 +6,7 @@ import App from './components/App';
 import HomePage from './components/homepage/HomePage';
 import AboutPage from './components/aboutpage/AboutPage';
 import LoginPage from './components/loginpage/LoginPage';
-import RegistrationPage from './components/registration/RegistrationPage';
+import RegistrationPage from './components/registrationpage/RegistrationPage';
 
 export default (
   <Route path="/" component={App}>

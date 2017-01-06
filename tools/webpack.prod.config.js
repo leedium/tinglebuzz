@@ -20,6 +20,12 @@ module.exports = {
         include: path.resolve(__dirname, src),
         use: 'babel-loader'
       },
+
+      {
+        test: /\.(json)$/,
+        include: path.resolve(__dirname, src),
+        use: 'json-loader'
+      }
     ]
   },
   target: "web",

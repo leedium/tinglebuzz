@@ -27,13 +27,14 @@ const RESTServer = () =>
     app.use(bodyparser.json());
     app.use(passport.initialize());
 
-
     if (process.env.NODE_ENV === 'development') {
       proxy = httpProxy.createServer({
         changeOrigin: true,
         ws: true,
         ssl,
       });
+
+      app.use(routes);
 
       app.get('/__webpack_hmr', (req, res) => {
         proxy.web(req, res, {
