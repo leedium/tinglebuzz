@@ -1,6 +1,7 @@
 import {WebAuth} from 'auth0-js';
-
 const CLIENT_ID = '7IrNQSfkujXdawEECjxt5wl5jRMDIDST';
+
+
 class AuthService {
   constructor(clientId = '7IrNQSfkujXdawEECjxt5wl5jRMDIDST', domain = 'tinglebuzz.auth0.com') {
     this.auth0 = new WebAuth({
@@ -39,8 +40,7 @@ class AuthService {
           realm: 'Username-Password-Authentication',
           username,
           password,
-          audience: 'https://mystore.com/api/v2',
-          scope: 'read:order write:order',
+          scope: 'openid',
         }, (err, authResult) => {
           if (err) {
             reject(err);
@@ -60,7 +60,7 @@ class AuthService {
           username,
           password,
           audience: 'https://mystore.com/api/v2',
-          scope: 'read:order write:order',
+          scope: 'openid',
         }, (err, authResult) => {
           if (err) {
             reject(err);

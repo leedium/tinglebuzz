@@ -10,6 +10,8 @@ import bodyparser from 'body-parser';
 import passport from 'passport';
 import {match, RouterContext} from 'react-router';
 import ReactDOMServer from 'react-dom/server';
+import jwt from 'express-jwt';
+
 import routes from './routes';
 
 
@@ -18,6 +20,7 @@ const RESTServer = () =>
     const app = express();
     const port = process.env.REST_PORT || 3001;
     let proxy;
+
 
     const ssl = {
       key: fs.readFileSync(path.join(__dirname, '../../../', process.env.SSL_KEY || 'ssl/client-key.pem')),
