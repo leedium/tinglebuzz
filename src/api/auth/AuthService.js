@@ -1,14 +1,14 @@
 import {WebAuth} from 'auth0-js';
-const CLIENT_ID = '7IrNQSfkujXdawEECjxt5wl5jRMDIDST';
+const CLIENT_ID = 'HG1R6XaTntKLwDSUoBKkWX6gFgyQBc0o';
 
 
 class AuthService {
-  constructor(clientId = '7IrNQSfkujXdawEECjxt5wl5jRMDIDST', domain = 'tinglebuzz.auth0.com') {
+  constructor() {
     this.auth0 = new WebAuth({
       domain: 'tinglebuzz.auth0.com',
-      clientID: '7IrNQSfkujXdawEECjxt5wl5jRMDIDST',
-      callbackURL: '/home',
-      responseType: 'token',
+      clientID: 'HG1R6XaTntKLwDSUoBKkWX6gFgyQBc0o',
+      //callbackUrl: '/home',
+      //responseType: 'token',
     });
   }
 
@@ -19,7 +19,6 @@ class AuthService {
         email,
         password,
         user_metadata,
-        client_id: CLIENT_ID,
         sso: true,
         popup: true,
         auto_login: false,
@@ -40,27 +39,6 @@ class AuthService {
           realm: 'Username-Password-Authentication',
           username,
           password,
-          scope: 'openid',
-        }, (err, authResult) => {
-          if (err) {
-            reject(err);
-            return;
-          }
-          resolve(authResult);
-        });
-      }
-    });
-  }
-
-  loginSocial({access_token, connection = 'facebook'}) {
-    return new Promise((resolve, reject) => {
-      if (type === 'DB') {
-        this.auth0.client.login({
-          realm: 'Username-Password-Authentication',
-          username,
-          password,
-          audience: 'https://mystore.com/api/v2',
-          scope: 'openid',
         }, (err, authResult) => {
           if (err) {
             reject(err);

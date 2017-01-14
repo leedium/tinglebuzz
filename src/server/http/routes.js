@@ -93,7 +93,13 @@ router.get('/user', (req, res) => {
   });
 });
 
-router.post('/user', (req, res) => {
+router.get('/api/authorized', (req, res) => {
+  console.log('worked',req.user)
+  res.status(200).send({user:req.user});
+
+});
+
+router.post('/api/user', (req, res) => {
   const {type, username, auth0Id} = req.body;
   User.addUser({
     auth0Id,
@@ -130,8 +136,10 @@ router.post('/oauth/access_token', (req, res) => {
       scope: 'openid profile email',
     })
     .end((err, response) => {
+
       if (err) {
-        res.status(404);
+        console.log(err.status)
+        res.status(err.status);
         return;
       }
       res.status(200).set({
