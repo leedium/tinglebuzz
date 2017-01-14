@@ -1,10 +1,11 @@
 import express from 'express';
 import braintree from 'braintree';
-
+import superagent from 'superagent';
 import passport from 'passport';
 import PassportUniqueToken from 'passport-unique-token';
 import FacebookTokenStrategy from 'passport-facebook-token';
 import FacebookStrategy from 'passport-facebook';
+
 import User from '../mongodb/model/User';
 import ProviderProfile from '../mongodb/model/ProviderProfile';
 
@@ -95,8 +96,9 @@ router.get('/user', (req, res) => {
 });
 
 router.post('/user', (req, res) => {
-  const {type, username, password, email} = req.body;
+  const {type, username, password, email, auth0Id} = req.body;
   User.addUser({
+    auth0Id,
     type,
     username,
     password,
@@ -117,6 +119,27 @@ router.post('/user', (req, res) => {
 //  Facebook Auth
 router.get('/auth/user', passport.authenticate('token'), (req, res) => {
   res.status(200).send(req.user);
+});
+
+//  0Auth
+router.post('/oauth/access_token', (req, res) => {
+  superagent
+    .post('https://tinglebuzz.auth0.com/oauth/access_token')
+    .send({
+      client_id: '7IrNQSfkujXdawEECjxt5wl5jRMDIDST',
+      access_token: req.body.access_token,
+      connection: 'facebook',
+      scope: 'profile',
+    })
+    .end((err, response) => {
+      if (err) {
+        res.status(404);
+        return;
+      }
+      res.status(200).set({
+        'set-cookie': response.get('set-cookie'),
+      }).send(response.body);
+    });
 });
 
 router.post('/auth/facebook/token', passport.authenticate('facebook-token'), (req, res) => {

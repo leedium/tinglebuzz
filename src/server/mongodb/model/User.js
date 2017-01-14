@@ -8,6 +8,9 @@ import UserType from '../../../api/types/UserType';
 import { validateType } from '../../../api/types/UserType';
 
 const UserSchema = new mongoose.Schema({
+  auth0Id: {
+    type: String,
+  },
   type: {
     required: true,
     type: String,
@@ -54,9 +57,10 @@ const UserSchema = new mongoose.Schema({
 });
 
 UserSchema.methods.toJSON = function () {
-  let { _id, email, username, fname, lname } = this.toObject();
+  let { _id, auth0Id, email, username, fname, lname } = this.toObject();
   return {
     _id,
+    auth0Id,
     email,
     username,
     fname,
@@ -68,7 +72,7 @@ UserSchema.methods.generateUserAuth = function () {
   const user = this;
   const access = 'auth';
   const token = jwt.sign({
-    id: user._id.toHexString(),
+    id: user.auth0Id.toHexString(),
     password: user.password,
     access,
   }, '1234abc');
@@ -125,10 +129,11 @@ UserSchema.statics.findByCredentials = function({usernamePassword, password}) {
     });
 };
 
-UserSchema.statics.addUser = function ({_id = new ObjectID(), type = UserType.guest, email, password, username, fname, lname}) {
+UserSchema.statics.addUser = function ({auth0Id, _id = new ObjectID(), type = UserType.guest, email, password, username, fname, lname}) {
   const User = this;
   return new User({
     _id,
+    auth0Id,
     type,
     email,
     password,

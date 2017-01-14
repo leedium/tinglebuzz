@@ -1,34 +1,45 @@
 import request from 'supertest';
 import expect from 'expect';
 import {ObjectID} from 'mongodb';
+
 import UsertType from '../../../api/types/UserType';
 import httpServer from '../server-http';
+import AuthService from '../../../api/auth/AuthService';
 import User from '../../mongodb/model/User';
 import mongodbConnect from '../../mongodb/mongodb-connect';
 import {clearDB} from '../../mongodb/model/helpers';
 
-const Browser =  require('zombie');
+const Browser = require('zombie');
 
 const FBAccessToken = 'EAAC5HjuVFUsBAKGHgESRLJrDXmAAqJM8IvP57CxcqNzB93HKjHCxrgJXiCyNUNIwpJjq6OLZCe1ZBmhvEZAqwLakpwldiIh3pKB4hZBwdaSam7g4UmcQu1YiU9nPQg9ZAbYZC6XxxmzM4vdohpHKZA47RpD1EFL1YkZD'
 const FBAppToken = '203539499783499|29qxUlbdyWRmGZj6Mgr2JFbKvqk'
 
+
+const auth0_client_id = '7IrNQSfkujXdawEECjxt5wl5jRMDIDST';
 
 //  lifecycle
 describe('http REST API tests', () => {
   let mongoose;
   let server;
   let app;
-  let registeredUser;
+  let registeredUser  = null;
+  const authService = new AuthService();
   const userID = new ObjectID();
 
   const aUser = {
     type: UsertType.guest,
     username: 'Test Name D',
-    email: 'test@test.com',
+    email: 'leedium@me.com',
     password: 'testpassword',
     fname: 'fname1',
     lname: 'lname1',
-  }
+  };
+
+  const user = {
+    email: 'leedium@me.com',
+    password: 'astrongpassword',
+    type: 'DB',
+  };
 
   before((done) => {
     console.log('=============================>');
@@ -52,31 +63,72 @@ describe('http REST API tests', () => {
     });
   });
 
-  it('Should addUser POST:/user ', (done) => {
-    request(app)
-      .post('/user')
-      .send(aUser)
-      .expect((res) => {
-        expect(res.headers['x-access-token']).toExist();
-        expect(res.body._id).toExist();
-        expect(res.body.err).toNotExist();
-        registeredUser = res.body._id;
+  it('Auth0 should invalidate a non existant DB user', (done) => {
+    authService.login({
+      username: 'me',
+      password: 'pass',
+      type: 'DB',
+    })
+      .then((authObj) => {
+        done();
+        expect(authObj).toBe(undefined);
       })
-      .end(done);
+      .catch((err) => {
+        expect(err).toExist();
+        done();
+      });
   });
 
-  it('should reject a User that already exists with same email or username', (done) => {
-    request(app)
-      .post('/user')
-      .send(aUser)
-      .expect((res) => {
-        expect(res.body.err).toExist();
+  it('Auth0 should signup a user and add to Tinglebuzz db', (done) => {
+    authService.signup(user)
+      .then((authObj) => {
+        request(app)
+          .post('/user')
+          .send(Object.assign(aUser, {auth0Id: authObj.Id}))
+          .expect((res) => {
+            expect(res.headers['x-access-token']).toExist();
+            expect(res.body._id).toExist();
+            expect(res.body.err).toNotExist();
+            registeredUser = res.body._id;
+          })
+          .end(done);
       })
-      .end(done);
+      .catch((err) => {
+        expect(err).toNotBe(null);
+        done();
+      });
   });
 
+  it('Auth0 should reject a User that already exists with same email or username', (done) => {
+    authService.signup(user)
+      .catch((err) => {
+        expect(err).toNotBe(null);
+        done();
+      });
+  });
+
+  it('Auth0 login User via facebook', (done) => {
+    // request('https://tinglebuzz.auth0.com')
+    request(app)
+      .post('/oauth/access_token')
+      .send({
+        access_token: FBAccessToken,
+        connection: 'facebook',
+        scope: 'profile',
+      })
+      .end((err, res) => {
+        expect(res.status).toBe(200);
+        done();
+      });
+  });
 
   it('Should find User wih x-access-token header- GET:/user ', (done) => {
+    if(registeredUser === null){
+      expect(registeredUser).toBe(null);
+      done();
+      return;
+    }
+
     User.findById(registeredUser, 'tokens').then((user) => {
       request(app)
         .get('/user')
@@ -95,6 +147,11 @@ describe('http REST API tests', () => {
   });
 
   it('Should find User wih passport-access-token header- GET:/auth/user ', (done) => {
+    if(registeredUser === null){
+      expect(registeredUser).toBe(null);
+      done();
+      return;
+    }
     User.findById(registeredUser, 'tokens').then((user) => {
       request(app)
         .get('/auth/user')
@@ -161,6 +218,7 @@ describe('http REST API tests', () => {
         done();
       });
   });
+
 
   it('Should send a BrainTree client token to client', (done) => {
     request(app)

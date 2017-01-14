@@ -31,6 +31,9 @@ class LoginPage extends ReduxComponent {
     });
   }
 
+  componentDidMount() {
+  }
+
   render() {
     return (
       <div>
