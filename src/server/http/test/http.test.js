@@ -98,58 +98,39 @@ describe('http REST API tests', () => {
   //       done();
   //     });
   // });
-
-  it('Auth0 should signup a user and add to Tinglebuzz db', (done) => {
-    // authService.signup(user)
-    //   .then((authObj) => {
-    //     request(app)
-    //       .set('authorization', `${authResponse.token_type} ${authResponse.access_token}`)
-    //       .post('/api/user')
-    //       .send(Object.assign(aUser, authObj))
-    //       .expect((res) => {
-    //         expect(res.headers['x-access-token']).toExist();
-    //         expect(res.body._id).toExist();
-    //         expect(res.body.err).toNotExist();
-    //         registeredUser = res.body._id;
-    //       })
-    //       .end(done);
-    //   })
-    //   .catch((err) => {
-    //     expect(true).toBe(false);
-    //     done();
-    //   });
-    done();
-  });
-
-  it('Auth0 should login db user.', (done) => {
-    authService.login({
-      username: 'leedium@me.com',
-      password: 'astrongpassword' ,
-      type: 'DB',
-    })
-      .then((authObj) => {
-        expect(authObj).toNotBe(undefined);
-        done();
-      })
-      .catch((err) => {
-        expect(err).toNotExist();
+  it('/api/* can only be accessed by authenticated user', (done) => {
+    request(app)
+      .get('/api/authorized')
+      .set('authorization', `${authResponse.token_type} ${authResponse.access_token}`)
+      .end((err, res) => {
+        expect(res.body.user).toExist();
         done();
       });
   });
 
-  // it('Auth0 login User via facebook', (done) => {
-  //   request(app)
-  //     .post('/oauth/access_token')
-  //     .send({
-  //       access_token: FBAccessToken,
-  //       connection: 'facebook',
-  //       scope: 'profile',
+  // it('Auth0 should signup a user and add to Tinglebuzz db', (done) => {
+  //   authService.signup(user)
+  //     .then((authObj) => {
+  //       request(app)
+  //         .set('authorization', `${authResponse.token_type} ${authResponse.access_token}`)
+  //         .post('/api/user')
+  //         .send(Object.assign(aUser, authObj))
+  //         .expect((res) => {
+  //           //expect(res.headers['x-access-token']).toExist();
+  //           expect(res.body._id).toExist();
+  //           expect(res.body.err).toNotExist();
+  //           registeredUser = res.body._id ;
+  //         })
+  //         .end(done);
   //     })
-  //     .end((err, res) => {
-  //       expect(res.status).toBe(200);
+  //     .catch((err) => {
+  //       console.log(err)
+  //       expect(true).toBe(false) ;
   //       done();
   //     });
   // });
+
+
 
   it('Auth0 should reject a User that already exists with same email or username', (done) => {
     authService.signup(user)
@@ -159,17 +140,35 @@ describe('http REST API tests', () => {
       });
   });
 
-  it('/api/* can only be accessed by authenticated user', (done) => {
+  // it('Auth0 should login db user.', (done) => {
+  //   authService.login({
+  //     username: 'leedium@me.com',
+  //     password: 'astrongpassword' ,
+  //     type: 'DB',
+  //   })
+  //     .then((authObj) => {
+  //       expect(authObj).toNotBe(undefined);
+  //       done();
+  //     })
+  //     .catch((err) => {
+  //       expect(err).toNotExist();
+  //       done();
+  //     });
+  // });
+
+  it('Auth0 login User via facebook', (done) => {
     request(app)
-      .get('/api/authorized')
-      .set('authorization', `${authResponse.token_type} ${authResponse.access_token}`)
+      .post('/oauth/access_token')
+      .send({
+        access_token: FBAccessToken,
+        connection: 'facebook',
+        scope: 'profile',
+      })
       .end((err, res) => {
-      console.log(res.body.user)
-        expect(res.body.user).toExist();
+        expect(res.status).toBe(200);
         done();
       });
   });
-
 
 
   // it('Should find User wih x-access-token header- GET:/user ', (done) => {

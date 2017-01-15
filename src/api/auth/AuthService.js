@@ -1,14 +1,11 @@
 import {WebAuth} from 'auth0-js';
 const CLIENT_ID = 'HG1R6XaTntKLwDSUoBKkWX6gFgyQBc0o';
 
-
 class AuthService {
   constructor() {
     this.auth0 = new WebAuth({
       domain: 'tinglebuzz.auth0.com',
-      clientID: 'HG1R6XaTntKLwDSUoBKkWX6gFgyQBc0o',
-      //callbackUrl: '/home',
-      //responseType: 'token',
+      clientID: CLIENT_ID,
     });
   }
 
@@ -44,6 +41,7 @@ class AuthService {
             reject(err);
             return;
           }
+          this.setToken(authResult.accessToken);
           resolve(authResult);
         });
       }
@@ -55,15 +53,24 @@ class AuthService {
   }
 
   setToken(idToken) {
-    localStorage.setItem('id_token', idToken);
+    if (localStorage) {
+      localStorage.setItem('access_token', idToken);
+    }
   }
 
   getToken() {
-    return localStorage.getItem('id_token');
+    if (localStorage) {
+      return localStorage.getItem('access_token');
+    }
   }
 
   logout() {
-    localStorage.removeItem('id_token');
+    return Promise.resolve({}).then(()=>{
+      if (localStorage) {
+        localStorage.removeItem('access_token');
+      }
+      this.auth0.logout();
+    });
   }
 }
 

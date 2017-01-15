@@ -6,8 +6,8 @@ import App from './components/App';
 import HomePage from './components/homepage/HomePage';
 import AboutPage from './components/aboutpage/AboutPage';
 import LoginPage from './components/loginpage/LoginPage';
+import LogoutPage from './components/logoutpage/LogoutPage';
 import RegistrationPage from './components/registrationpage/RegistrationPage';
-
 
 const authService = new AuthService();
 
@@ -20,12 +20,18 @@ const requireAuth = (nextState, replace) => {
   }
 };
 
+//
+const logoutUser = (nextState, replace) => {
+  authService.logout();
+};
+
 export default (
   <Route path="/" component={App}>
     <IndexRoute component={HomePage}/>
-    <Route path="home" authservice={authService} component={HomePage} onEnter={requireAuth}/>
+    <Route path="home" component={HomePage} onEnter={requireAuth}/>
     <Route path="about" component={AboutPage}/>
-    <Route path="login" authservice={authService} component={LoginPage}>
+    <Route path="logout" component={LogoutPage} />
+    <Route path="login" component={LoginPage}>
       <Route path="/help/:id" component={LoginPage} />
 
       </Route>

@@ -1,12 +1,13 @@
 import { createStore, applyMiddleware} from 'redux';
-import combinedReducers from '../reducers/combinedReducers';
 import thunk from 'redux-thunk';
+
+import combinedReducers from '../reducers/combinedReducers';
 
 function Store(initialState){
   return createStore(
     combinedReducers,
     initialState,
-    applyMiddleware(thunk)
+    applyMiddleware(thunk),
   );
 }
 

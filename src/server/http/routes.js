@@ -94,9 +94,7 @@ router.get('/user', (req, res) => {
 });
 
 router.get('/api/authorized', (req, res) => {
-  console.log('worked',req.user)
   res.status(200).send({user:req.user});
-
 });
 
 router.post('/api/user', (req, res) => {
@@ -130,18 +128,20 @@ router.post('/oauth/access_token', (req, res) => {
   superagent
     .post('https://tinglebuzz.auth0.com/oauth/access_token')
     .send({
-      client_id: '7IrNQSfkujXdawEECjxt5wl5jRMDIDST',
+      client_id: 'HUo4DwwNMW1Tu67sUaGjzVXyExRC5QPD',
+      client_secret: '92SII7LMv3NhIfG7p6yNHUzBTlDBmAPZMmuY5D_THiAh1zM8gQYGYc68pge71ein',
       access_token: req.body.access_token,
       connection: 'facebook',
       scope: 'openid profile email',
     })
     .end((err, response) => {
-
       if (err) {
-        console.log(err.status)
         res.status(err.status);
         return;
       }
+
+      console.log(response.headers)
+
       res.status(200).set({
         'set-cookie': response.get('set-cookie'),
       }).send(response.body);

@@ -19,15 +19,16 @@ import routes from './routes';
 const RESTServer = () =>
   new Promise((resolve, reject) => {
 
+    //  add RS256 protection on selected routes
     const jwtCheck = jwt({
       secret: jwks.expressJwtSecret({
         cache: true,
         rateLimit: true,
         jwksRequestsPerMinute: 5,
-        jwksUri: "https://tinglebuzz.auth0.com/.well-known/jwks.json"
+        jwksUri: 'https://tinglebuzz.auth0.com/.well-known/jwks.json',
       }),
       audience: 'https://tinglebuzz/api',
-      issuer: "https://tinglebuzz.auth0.com/",
+      issuer: 'https://tinglebuzz.auth0.com/',
       algorithms: ['RS256'],
     });
 
@@ -85,7 +86,6 @@ const RESTServer = () =>
           if (err) {
             return reject(err);
           }
-          //  console.log(`RESTAPI server started on port: ${port}`.green);
           return resolve({
             app,
             server,
