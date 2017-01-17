@@ -29,7 +29,7 @@ class AuthService {
     });
   }
 
-  login({username, password, type}) {
+  login({username, password, type, providerType}) {
     return new Promise((resolve, reject) => {
       if (type === 'DB') {
         this.auth0.client.login({
@@ -44,7 +44,32 @@ class AuthService {
           this.setToken(authResult.accessToken);
           resolve(authResult);
         });
+      }else{
+        this.auth0.login({
+          connection: providerType,
+        }, (err, authResult) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+          //this.setToken(authResult.accessToken);
+          //resolve(authResult);
+          console.log(authResult);
+        });
       }
+    });
+  }
+
+  loginSocial(provider = 'facebook'){
+    return new Promise((resolve, reject) => {
+      this.auth0.login({
+        connection: provider,
+      }, (err, res) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(res);
+      });
     });
   }
 

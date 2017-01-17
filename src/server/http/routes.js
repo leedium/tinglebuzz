@@ -69,8 +69,6 @@ router.post('/version', (req, res) => {
   res.json({version: '1.0.0'});
 });
 
-
-
 // router.post('/user/login', (req, res) => {
 //   User.findByCredentials(req.body).then((foundUser) => {
 //     foundUser.generateUserAuth().then(({user, token}) => {
@@ -139,9 +137,6 @@ router.post('/oauth/access_token', (req, res) => {
         res.status(err.status);
         return;
       }
-
-      console.log(response.headers)
-
       res.status(200).set({
         'set-cookie': response.get('set-cookie'),
       }).send(response.body);
@@ -158,7 +153,7 @@ router.post('/oauth/access_token', (req, res) => {
 //   });
 
 //  BrainTree Auth
-router.get('/api/payment-client-token',(req, res) => {
+router.get('/payment-client-token',(req, res) => {
   gateway.clientToken.generate({}, (err, response) => {
     if (err) {
       res.send({success: false});

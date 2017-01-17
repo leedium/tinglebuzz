@@ -3,7 +3,7 @@ import request from 'superagent';
 const ClientRequest = {
   getBrainTreeClientToken() {
     return new Promise((resolve, reject) => {
-      request.get('/api/payment-client-token')
+      request.get('/payment-client-token')
         .end((err, res) => {
           if (err) {
             reject(err);

@@ -56,6 +56,14 @@ function requestLogin(loginData) {
   };
 }
 
+function requestSocialLogin(loginData) {
+  return function (dispatch) {
+    return authService.loginSocial()
+      .then(res => dispatch(loginSuccess(res)))
+      .catch(err => dispatch(loginFail(err)));
+  };
+}
+
 function requestLogout(userData) {
   return function (dispatch) {
     return authService.logout(userData)
