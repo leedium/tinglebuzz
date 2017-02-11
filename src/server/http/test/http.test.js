@@ -2,7 +2,9 @@ import request from 'supertest';
 import req from 'request';
 import expect from 'expect';
 import {ObjectID} from 'mongodb';
+
 import jwt from 'express-jwt';
+
 import UsertType from '../../../api/types/UserType';
 import httpServer from '../server-http';
 import AuthService from '../../../api/auth/AuthService';
@@ -15,6 +17,8 @@ const Browser = require('zombie');
 const FBAccessToken = 'EAAC5HjuVFUsBAKGHgESRLJrDXmAAqJM8IvP57CxcqNzB93HKjHCxrgJXiCyNUNIwpJjq6OLZCe1ZBmhvEZAqwLakpwldiIh3pKB4hZBwdaSam7g4UmcQu1YiU9nPQg9ZAbYZC6XxxmzM4vdohpHKZA47RpD1EFL1YkZD'
 const FBAppToken = '203539499783499|29qxUlbdyWRmGZj6Mgr2JFbKvqk';
 
+const TwitterAccessToken = '743334099817902080-vDThIIZ5Btqd3JaF7K0VGKNGgJYoanK';
+
 
 const auth0_client_id = '7IrNQSfkujXdawEECjxt5wl5jRMDIDST';
 
@@ -23,9 +27,10 @@ describe('http REST API tests', () => {
   let mongoose;
   let server;
   let app;
-  let registeredUser  = null;
-  let authResponse = null
-  const authService = new AuthService();
+  let registeredUser = null;
+  let authResponse = null;
+  let loggedInUserAccessToken = null;
+  const authService = new AuthService.getInstance();
   const userID = new ObjectID();
 
   const aUser = {
@@ -38,16 +43,18 @@ describe('http REST API tests', () => {
   };
 
   const user = {
-    email: 'leedium@me.com',
+    username: 'leedium@me.com',
     password: 'astrongpassword',
     type: 'DB',
   };
 
   before((done) => {
-    var options = { method: 'POST',
+    let options = {
+      method: 'POST',
       url: 'https://tinglebuzz.auth0.com/oauth/token',
-      headers: { 'content-type': 'application/json' },
-      body: '{"client_id":"HUo4DwwNMW1Tu67sUaGjzVXyExRC5QPD","client_secret":"f49yARiHky9n8oQxf1BEi5OyE9jEN__vjqnSF63n19Beo4DQDG0bTFkuVxvgQ8Db","audience":"https://tinglebuzz/api","grant_type":"client_credentials"}' };
+      headers: {'content-type': 'application/json'},
+      body: '{"client_id":"HUo4DwwNMW1Tu67sUaGjzVXyExRC5QPD","client_secret":"f49yARiHky9n8oQxf1BEi5OyE9jEN__vjqnSF63n19Beo4DQDG0bTFkuVxvgQ8Db","audience":"https://tinglebuzz/api","grant_type":"client_credentials"}'
+    };
 
     console.log('=============================>');
     httpServer().then((http) => {
@@ -56,7 +63,7 @@ describe('http REST API tests', () => {
       mongodbConnect().then((db) => {
         mongoose = db;
         clearDB().then(() => {
-          req(options,(error, response, body) => {
+          req(options, (error, response, body) => {
             authResponse = JSON.parse(body);
             done();
           });
@@ -108,6 +115,7 @@ describe('http REST API tests', () => {
       });
   });
 
+
   // it('Auth0 should signup a user and add to Tinglebuzz db', (done) => {
   //   authService.signup(user)
   //     .then((authObj) => {
@@ -129,8 +137,6 @@ describe('http REST API tests', () => {
   //       done();
   //     });
   // });
-
-
 
   it('Auth0 should reject a User that already exists with same email or username', (done) => {
     authService.signup(user)
@@ -156,19 +162,85 @@ describe('http REST API tests', () => {
   //     });
   // });
 
-  it('Auth0 login User via facebook', (done) => {
+  it('Auth0 should login User via facebook', (done) => {
     request(app)
-      .post('/oauth/access_token')
+      .post('/oauth/social/access_token')
       .send({
         access_token: FBAccessToken,
         connection: 'facebook',
-        scope: 'profile',
+        scope: 'profile email openid',
       })
       .end((err, res) => {
+        loggedInUserAccessToken = res.body.access_token;
         expect(res.status).toBe(200);
         done();
       });
   });
+
+  it(`Facebook Userinfo found using access token: ${loggedInUserAccessToken}`, (done) => {
+    request(app)
+      .get('/api/userinfo')
+      .set('authorization', `${authResponse.token_type} ${authResponse.access_token}`)
+      .set('access_token', loggedInUserAccessToken)
+      .end((err, res) => {
+        expect(res.status).toBe(200);
+        expect(res.body.name).toExist();
+        done();
+      });
+  });
+
+  it('Auth0 should login User via Twitter', (done) => {
+    request(app)
+      .post('/oauth/social/access_token')
+      .send({
+        access_token: TwitterAccessToken,
+        connection: 'twitter',
+        scope: 'profile',
+      })
+      .end((err, res) => {
+        loggedInUserAccessToken = res.body.access_token;
+        expect(res.status).toBe(200);
+        done();
+      });
+  });
+
+  it(`Twitter Userinfo found using access token`, (done) => {
+    request(app)
+      .get('/api/userinfo')
+      .set('authorization', `${authResponse.token_type} ${authResponse.access_token}`)
+      .set('access_token', loggedInUserAccessToken)
+      .end((err, res) => {
+        expect(res.status).toBe(200);
+        expect(res.body.name).toExist();
+        done();
+      });
+  });
+
+
+  it('Auth0 should login User via Database', (done) => {
+    authService.login(user)
+      .then((res) => {
+        loggedInUserAccessToken = res.accessToken;
+        expect(res.accessToken).toExist();
+        done();
+      }).catch((err) => {
+         expect(res.accessToken).toExist();
+          done();
+    });
+  });
+
+  it(`Database Userinfo found using access token`, (done) => {
+    request(app)
+      .get('/api/userinfo')
+      .set('authorization', `${authResponse.token_type} ${authResponse.access_token}`)
+      .set('access_token', loggedInUserAccessToken)
+      .end((err, res) => {
+        expect(res.status).toBe(200)
+        expect(res.body.name).toExist();
+        done();
+      });
+  });
+
 
 
   // it('Should find User wih x-access-token header- GET:/user ', (done) => {

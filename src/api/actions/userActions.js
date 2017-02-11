@@ -1,7 +1,7 @@
 import AuthService from '../auth/AuthService';
 import {UserActionTypes} from './ActionTypes';
 
-const authService = new AuthService();
+const authService = new AuthService.getInstance();
 
 function get(userData){
   return {
@@ -71,4 +71,12 @@ function requestLogout(userData) {
   };
 }
 
-export {get, getGeo, requestLogin, register, requestLogout,}
+function isLoggedIn() {
+  return function(dispatch) {
+    return authService.loggedIn()
+      .then(res => dispatch(loginSuccess(res)))
+      .catch(err => dispatch(loginFail(err)));
+  }
+}
+
+export {get, getGeo, requestLogin, register, requestLogout, isLoggedIn}

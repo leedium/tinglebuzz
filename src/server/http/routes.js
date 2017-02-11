@@ -19,6 +19,11 @@ const gateway = braintree.connect({
   privateKey: '08e4b2ebf8f4f77874ef9855a13afde7',
 });
 
+const Auth0 = {
+    client_id: 'HUo4DwwNMW1Tu67sUaGjzVXyExRC5QPD',
+    client_secret: '92SII7LMv3NhIfG7p6yNHUzBTlDBmAPZMmuY5D_THiAh1zM8gQYGYc68pge71ein',
+}
+
 // passport.serializeUser((user, done) => {
 //   done(null, user);
 // });
@@ -95,6 +100,19 @@ router.get('/api/authorized', (req, res) => {
   res.status(200).send({user:req.user});
 });
 
+router.get('/api/userinfo', (req, res) => {
+  superagent
+    .get('https://tinglebuzz.auth0.com/userinfo')
+    .set('Authorization', `Bearer ${req.headers['access_token']}`)
+    .end((err, response) => {
+      if (err) {
+        res.status(err.status).send(err);
+        return;
+      }
+      res.status(200).json(response.body);
+    });
+});
+
 router.post('/api/user', (req, res) => {
   const {type, username, auth0Id} = req.body;
   User.addUser({
@@ -122,19 +140,23 @@ router.post('/api/user', (req, res) => {
 // });
 
 //  0Auth
-router.post('/oauth/access_token', (req, res) => {
+router.post('/oauth/social/access_token', (req, res) => {
   superagent
     .post('https://tinglebuzz.auth0.com/oauth/access_token')
+    .set({
+      'Content-Type': 'application/json',
+    })
     .send({
-      client_id: 'HUo4DwwNMW1Tu67sUaGjzVXyExRC5QPD',
-      client_secret: '92SII7LMv3NhIfG7p6yNHUzBTlDBmAPZMmuY5D_THiAh1zM8gQYGYc68pge71ein',
+      client_id: Auth0.client_id,
       access_token: req.body.access_token,
-      connection: 'facebook',
+      access_token_secret: 'UyV5R6w7lWRL4Jm3lSfSUYnXM58FLfzBgsVcatH6T9R99', // just for testing twitter
+      user_id: 'leedium', //testing twitter
+      connection: req.body.connection,
       scope: 'openid profile email',
     })
     .end((err, response) => {
       if (err) {
-        res.status(err.status);
+        res.status(err.status).send(err);
         return;
       }
       res.status(200).set({

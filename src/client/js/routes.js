@@ -9,7 +9,7 @@ import LoginPage from './components/loginpage/LoginPage';
 import LogoutPage from './components/logoutpage/LogoutPage';
 import RegistrationPage from './components/registrationpage/RegistrationPage';
 
-const authService = new AuthService();
+const authService = new AuthService.getInstance();
 
 // Protect route from being accessed.
 const requireAuth = (nextState, replace) => {
@@ -28,7 +28,7 @@ const logoutUser = (nextState, replace) => {
 export default (
   <Route path="/" component={App}>
     <IndexRoute component={HomePage}/>
-    <Route path="home" component={HomePage} onEnter={requireAuth}/>
+    <Route path="home" component={HomePage} />
     <Route path="about" component={AboutPage}/>
     <Route path="logout" component={LogoutPage} />
     <Route path="login" component={LoginPage}>

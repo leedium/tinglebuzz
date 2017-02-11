@@ -19,7 +19,7 @@ import routes from './routes';
 const RESTServer = () =>
   new Promise((resolve, reject) => {
 
-    //  add RS256 protection on selected routes
+    //  add RS256 protection on selected routes for each request
     const jwtCheck = jwt({
       secret: jwks.expressJwtSecret({
         cache: true,
@@ -42,7 +42,8 @@ const RESTServer = () =>
       cert: fs.readFileSync(path.join(__dirname, '../../../', process.env.SSL_CERT || 'ssl/client-cert.pem')),
     };
 
-    app.use('/api/*', jwtCheck);
+
+    app.use('/api/*', jwtCheck);  // protect all routes to api/* with valid JWT
     app.use(bodyparser.json());
     app.use(passport.initialize());
 

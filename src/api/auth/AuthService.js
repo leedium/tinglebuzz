@@ -1,12 +1,17 @@
-import {WebAuth} from 'auth0-js';
+import request from 'superagent';
+import {WebAuth, Authentication} from 'auth0-js';
 const CLIENT_ID = 'HG1R6XaTntKLwDSUoBKkWX6gFgyQBc0o';
-
-class AuthService {
+class _authService {
   constructor() {
     this.auth0 = new WebAuth({
       domain: 'tinglebuzz.auth0.com',
       clientID: CLIENT_ID,
     });
+
+    if(!!this.getToken()){
+      console.log('already logged in');
+    }
+
   }
 
   signup({email, password, user_metadata}) {
@@ -41,10 +46,10 @@ class AuthService {
             reject(err);
             return;
           }
-          this.setToken(authResult.accessToken);
+          this.setToken(authResult);
           resolve(authResult);
         });
-      }else{
+      } else {
         this.auth0.login({
           connection: providerType,
         }, (err, authResult) => {
@@ -52,15 +57,12 @@ class AuthService {
             reject(err);
             return;
           }
-          //this.setToken(authResult.accessToken);
-          //resolve(authResult);
-          console.log(authResult);
         });
       }
     });
   }
 
-  loginSocial(provider = 'facebook'){
+  loginSocial(provider = 'facebook') {
     return new Promise((resolve, reject) => {
       this.auth0.login({
         connection: provider,
@@ -74,24 +76,29 @@ class AuthService {
   }
 
   loggedIn() {
+    const token = this.getToken();
     return !!this.getToken();
   }
 
-  setToken(idToken) {
-    if (localStorage) {
-      localStorage.setItem('access_token', idToken);
+  setToken(authResult) {
+    if (process.browser) {
+      localStorage.setItem('access_token', authResult.accessToken);
+      localStorage.setItem('id_token', authResult.idToken);
     }
   }
 
   getToken() {
-    if (localStorage) {
-      return localStorage.getItem('access_token');
+    if (process.browser) {
+      return {
+          accessToken: localStorage.getItem('access_token'),
+          idToken: localStorage.getItem('id_token'),
+        };
     }
   }
 
   logout() {
-    return Promise.resolve({}).then(()=>{
-      if (localStorage) {
+    return Promise.resolve({}).then(() => {
+      if (process.browser) {
         localStorage.removeItem('access_token');
       }
       this.auth0.logout();
@@ -99,4 +106,16 @@ class AuthService {
   }
 }
 
+class AuthService {
+  static getInstance() {
+    if (!AuthService.instance){
+      AuthService.instance = new _authService();
+    }
+    return AuthService.instance;
+  }
+  constructor() {
+    throw new Error('Instances only accessed through AuthService.getInstance()')
+  }
+}
+AuthService.instance = null;
 export default AuthService;
