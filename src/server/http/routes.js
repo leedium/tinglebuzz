@@ -1,11 +1,15 @@
+import path from 'path';
 import express from 'express';
 import braintree from 'braintree';
 import superagent from 'superagent';
+import pug from 'pug';
 import jwt from 'express-jwt';
 import passport from 'passport';
 import PassportUniqueToken from 'passport-unique-token';
 import FacebookTokenStrategy from 'passport-facebook-token';
 import FacebookStrategy from 'passport-facebook';
+
+import App from '../../client/js/components/App';
 
 import User from '../mongodb/model/User';
 import ProviderProfile from '../mongodb/model/ProviderProfile';
@@ -183,5 +187,12 @@ router.get('/payment-client-token',(req, res) => {
     res.send(response);
   });
 });
+
+// router.get('/', (req, res) => {
+//   const template = pug.compileFile(indexPath)
+//   res.send(template(
+//
+//   ));
+// });
 
 export default router;

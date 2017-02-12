@@ -10,8 +10,6 @@ function get(userData){
   };
 }
 
-
-
 function loginSuccess(userData){
   return {
     type: UserActionTypes.LOGIN_SUCCESS,

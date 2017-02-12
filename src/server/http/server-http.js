@@ -2,6 +2,7 @@
 import React from 'react';
 import http from 'http';
 import https from 'https';
+import pug from 'pug';
 import fs from 'fs';
 import path from 'path';
 import express from 'express';
@@ -12,7 +13,6 @@ import {match, RouterContext} from 'react-router';
 import ReactDOMServer from 'react-dom/server';
 import jwt from 'express-jwt';
 import jwks from 'jwks-rsa';
-
 import routes from './routes';
 
 
@@ -43,6 +43,8 @@ const RESTServer = () =>
     };
 
 
+    app.set('view engine', 'pug');
+    app.set('views', './templates');
     app.use('/api/*', jwtCheck);  // protect all routes to api/* with valid JWT
     app.use(bodyparser.json());
     app.use(passport.initialize());

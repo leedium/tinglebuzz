@@ -11,7 +11,7 @@ class Header extends ReduxComponent {
   }
   render() {
     const logInOutBtn = ( this.props.user.auth === null ?
-      <li><Link to="/login">Login</Link></li> :
+      <li><a href="/login">Login</a></li> :
       <li><Link to="/logout">Logout</Link></li> );
     return (
       <header>
