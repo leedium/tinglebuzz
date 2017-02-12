@@ -8,6 +8,10 @@ import UserType from '../../../api/types/UserType';
 import { validateType } from '../../../api/types/UserType';
 
 const UserSchema = new mongoose.Schema({
+  auth0Id: {
+    type: String,
+    unique: true,
+  },
   type: {
     required: true,
     type: String,
@@ -15,21 +19,21 @@ const UserSchema = new mongoose.Schema({
       validator: validateType,
     },
   },
-  email: {
-    type: String,
-    trim: true,
-    minlength: 1,
-    unique: true,
-    validate: {
-      validator: validator.isEmail,
-      message: '{VALUE} is not a valid email',
-    },
-  },
-  password: {
-    type: String,
-    require: true,
-    minlength: 8,
-  },
+  // email: {
+  //   type: String,
+  //   trim: true,
+  //   minlength: 1,
+  //   unique: true,
+  //   validate: {
+  //     validator: validator.isEmail,
+  //     message: '{VALUE} is not a valid email',
+  //   },
+  // },
+  // password: {
+  //   type: String,
+  //   require: true,
+  //   minlength: 8,
+  // },
   username: {
     type: String,
     unique: true,
@@ -54,10 +58,10 @@ const UserSchema = new mongoose.Schema({
 });
 
 UserSchema.methods.toJSON = function () {
-  let { _id, email, username, fname, lname } = this.toObject();
+  let { _id, auth0Id, username, fname, lname } = this.toObject();
   return {
     _id,
-    email,
+    auth0Id,
     username,
     fname,
     lname,
@@ -67,21 +71,21 @@ UserSchema.methods.toJSON = function () {
 UserSchema.methods.generateUserAuth = function () {
   const user = this;
   const access = 'auth';
-  const token = jwt.sign({
-    id: user._id.toHexString(),
-    password: user.password,
-    access,
-  }, '1234abc');
-  user.tokens.push({
-    access,
-    token,
-  });
+  // const token = jwt.sign({
+  //   id: user._id.toHexString(),
+  //   password: user.password,
+  //   access,
+  // }, '1234abc');
+  // user.tokens.push({
+  //   access,
+  //   token,
+  // });
 
   return new Promise((resolve, reject) => {
     user.save().then((user) => {
       resolve({
         user,
-        token,
+        // token,
       });
     }).catch((err) => {
       reject(err);
@@ -125,13 +129,12 @@ UserSchema.statics.findByCredentials = function({usernamePassword, password}) {
     });
 };
 
-UserSchema.statics.addUser = function ({_id = new ObjectID(), type = UserType.guest, email, password, username, fname, lname}) {
+UserSchema.statics.addUser = function ({Id, _id = new ObjectID(), type = UserType.guest, email, password, username, fname, lname}) {
   const User = this;
   return new User({
     _id,
+    auth0Id: Id,
     type,
-    email,
-    password,
     username,
     fname,
     lname,

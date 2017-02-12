@@ -4,12 +4,19 @@ import ReactDOMServer from 'react-dom/server';
 import webpack from 'webpack';
 import express from 'express';
 import path from 'path';
+import {Provider} from 'react-redux';
 import webpackDevmiddleware from 'webpack-dev-middleware';
 import webpackHotmiddleware from 'webpack-hot-middleware';
 
 import routes from '../src/client/js/routes';
 import envConfig from './environment.config';
 import config from './webpack.config';
+
+import store from '../src/api/store/store';
+
+//  get the redux reducers
+
+import pug from 'pug';
 
 const client = () => {
   return new Promise((resolve, reject) => {
@@ -26,46 +33,51 @@ const client = () => {
     const compiler = webpack(webpackConfig);
     const middleware = webpackDevmiddleware(compiler,middlewareConfig);
 
-    app.set('view engine', 'ejs');
-    app.set('views', path.join(__dirname, '../src/views'));
+    app.set('view engine', 'pug');
+    app.set('views', path.join(__dirname, '../src/server/http/templates'));
 
     if(envConfig.isDev){
       app.use(middleware);
       app.use(webpackHotmiddleware(compiler,middlewareConfig));
 
-      app.get('*', (req, res) => {
-        res.render('index',{});
-      })
+      // app.get('*', (req, res) => {
+      //  res.render('index',{});
+      // })
 
       //Isomorphic
-      /*app.get('*', (req, res) => {
+      app.get('*', (req, res) => {
         match({routes, location: req.url}, (err, redirectLocation, renderProps) => {
           // in case of error display the error message
-          if (err) {
-            return res.status(500).send(err.message);
-          }
-
-          // in case of redirect propagate the redirect to the browser
-          if (redirectLocation) {
-            return res.redirect(302, redirectLocation.pathname + redirectLocation.search);
-          }
-
-          // generate the React markup for the current route
+          // if (err) {
+          //   return res.status(500).send(err.message);
+          // }
+          //
+          // // in case of redirect propagate the redirect to the browser
+          // if (redirectLocation) {
+          //   return res.redirect(302, redirectLocation.pathname + redirectLocation.search);
+          // }
+          //
+          // // generate the React markup for the current route
           let markup;
-
+          //
           if (renderProps) {
-            // if the current route matched we have renderProps
-            markup = ReactDOMServer.renderToString(<RouterContext {...renderProps} />);
+          //   // if the current route matched we have renderProps
+            markup = ReactDOMServer.renderToString(
+              <Provider store={store()}>
+                <RouterContext {...renderProps}/>
+              </Provider>
+
+            );
           } else {
-            // otherwise we can render a 404 page
+          //   // otherwise we can render a 404 page
             markup = ReactDOMServer.renderToString(<div>not found</div>);
             res.status(404);
           }
-
-          // render the index template with the embedded React markup
+          //
+          // // render the index template with the embedded React markup
           return res.render('index', {markup});
         });
-      });*/
+      });
 
       app.listen(port, (err) => {
         if(err){

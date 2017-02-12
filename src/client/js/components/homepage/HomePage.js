@@ -4,6 +4,9 @@ import {connect} from 'react-redux';
 import userActions from '../../../../api/actions/userActions'
 
 class Home extends React.Component {
+  constructor(props, context) {
+    super(props, context);
+  }
   render() {
     return (
       <div className="home-page">

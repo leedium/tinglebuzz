@@ -1,15 +1,25 @@
 import React from 'react';
 import {Link} from 'react-router';
+import {connect} from 'react-redux';
 
-class Header extends React.Component {
+import ReduxComponent from '../ReduxComponent';
+import * as userActions from '../../../../api/actions/userActions';
+
+class Header extends ReduxComponent {
+  constructor(props, context){
+    super(props, context);
+  }
   render() {
+    const logInOutBtn = ( this.props.user.auth === null ?
+      <li><a href="/login">Login</a></li> :
+      <li><Link to="/logout">Logout</Link></li> );
     return (
       <header>
         <nav>
           <ul>
             <li><Link to="/home">Home</Link></li>
             <li><Link to="/about">About</Link></li>
-            <li><Link to="/login">Login</Link></li>
+            {logInOutBtn}
             <li><Link to="/register">Register</Link></li>
           </ul>
         </nav>
@@ -18,5 +28,4 @@ class Header extends React.Component {
   }
 }
 
-
-export default Header;
+export default connect(ReduxComponent.mapStateToProps, userActions)(Header);

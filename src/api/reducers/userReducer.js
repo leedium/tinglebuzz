@@ -1,11 +1,17 @@
-function UserReducer(state = {}, action) {
+import {UserActionTypes} from '../../api/actions/ActionTypes';
+import initialState from '../store/initialState';
 
+function UserReducer(state = initialState.user, action) {
   switch (action.type) {
-    case 1: {
-      return Object.assign({}, state);
+    case UserActionTypes.LOGIN_SUCCESS: {
+      return Object.assign({}, state,{
+        auth: action.userData,
+      });
     }
-    case 2: {
-      return Object.assign({}, state);
+    case UserActionTypes.LOGIN_FAIL: {
+      return Object.assign({}, state, {
+        auth: null,
+      });
     }
     default:
       return state;
