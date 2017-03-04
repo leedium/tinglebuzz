@@ -9,7 +9,7 @@ const run = async () => {
    //await clean();
    //await copy();
    //await db();
-   await client();
+   await client().catch((e) => console.log(e))
   // console.log(envConfig.isDev)
    // if(envConfig.isDev){
    //   server();

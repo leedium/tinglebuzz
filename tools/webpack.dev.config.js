@@ -1,3 +1,4 @@
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const webpack = require('webpack');
 const path = require('path');
 const src = '../src';
@@ -15,11 +16,9 @@ module.exports = {
       {
         test: /\.(js|jsx)$/,
         include: path.resolve(__dirname, src),
-        use: ['babel-loader'],
-        query: {
-          cacheDirectory: true,
-        }
-
+        use: [{
+          loader:'babel-loader'
+        }],
       },
     ]
   },
@@ -32,7 +31,7 @@ module.exports = {
   plugins:[
     new webpack.HotModuleReplacementPlugin(),
     new webpack.optimize.OccurrenceOrderPlugin(),
-    new webpack.NoErrorsPlugin(),
+    new webpack.NoEmitOnErrorsPlugin(),
   ]
 }
 

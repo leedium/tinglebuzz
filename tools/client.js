@@ -19,7 +19,9 @@ import store from '../src/api/store/store';
 import pug from 'pug';
 
 const client = () => {
+
   return new Promise((resolve, reject) => {
+
     const port = process.env.HTTP_PORT || 3000;
     const app = express();
     const webpackConfig = config();
