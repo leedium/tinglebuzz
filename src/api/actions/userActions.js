@@ -24,6 +24,16 @@ function loginFail(userData){
   };
 }
 
+function validateUserResponse(userData) {
+
+  console.log(userData)
+
+  return {
+    type: UserActionTypes.VALIDATE_USER_ACCESS_TOKEN,
+    userData,
+  }
+}
+
 function logout(userData){
   return {
     type: UserActionTypes.LOGOUT,
@@ -74,7 +84,15 @@ function isLoggedIn() {
     return authService.loggedIn()
       .then(res => dispatch(loginSuccess(res)))
       .catch(err => dispatch(loginFail(err)));
+  };
+}
+
+function validateUserToken() {
+  return function(dispatch) {
+    return authService.validateUser()
+      .then(res => dispatch(validateUserResponse(res)))
+      .catch(err => dispatch(validateUserResponse(null)));
   }
 }
 
-export {get, getGeo, requestLogin, register, requestLogout, isLoggedIn}
+export {get, getGeo, requestLogin, register, requestLogout, isLoggedIn, validateUserToken, };

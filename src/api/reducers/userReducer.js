@@ -13,6 +13,13 @@ function UserReducer(state = initialState.user, action) {
         auth: null,
       });
     }
+
+    case UserActionTypes.VALIDATE_USER_ACCESS_TOKEN: {
+      return Object.assign({}, state, {
+        auth: action.userData,
+      });
+    }
+
     default:
       return state;
   }

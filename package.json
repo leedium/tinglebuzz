@@ -3,8 +3,12 @@
   "version": "1.0.0",
   "description": "Realtime informational assistance.",
   "main": "index.js",
-  "babel":{
-    "presets": ["react","es2015","stage-0"],
+  "babel": {
+    "presets": [
+      "react",
+      "es2015",
+      "stage-0"
+    ],
     "plugins": [
       "dynamic-import-webpack",
       "react-hot-loader/babel",
@@ -120,6 +124,7 @@
     "http-proxy": "^1.16.2",
     "json-loader": "^0.5.4",
     "mocha": "^3.2.0",
+    "moment": "^2.17.1",
     "npm-run-all": "^3.1.2",
     "phantom": "^3.2.1",
     "react-hot-loader": "^3.0.0-beta.6",
@@ -144,7 +149,7 @@
     "ejs": "^2.5.5",
     "express": "^4.14.0",
     "express-jwt": "^5.1.0",
-    "jsonwebtoken": "^7.2.1",
+    "jsonwebtoken": "^7.3.0",
     "jwks-rsa": "^1.1.1",
     "keymirror": "^0.1.1",
     "minimist": "1.1.0",

@@ -2,8 +2,8 @@ import request from 'supertest';
 import req from 'request';
 import expect from 'expect';
 import {ObjectID} from 'mongodb';
-
 import jwt from 'express-jwt';
+import jsonwebtoken from 'jsonwebtoken';
 
 import UsertType from '../../../api/types/UserType';
 import httpServer from '../server-http';
@@ -137,6 +137,14 @@ describe('http REST API tests', () => {
   //       done();
   //     });
   // });
+  it('Auth0 should reject user with invalid access token', (done) => {
+    authService.validateUser(authResponse.access_token + '123456789')
+      .catch((err) => {
+        expect(err).toNotBe(null);
+        done();
+      });
+  });
+
 
   it('Auth0 should reject a User that already exists with same email or username', (done) => {
     authService.signup(user)
@@ -162,6 +170,7 @@ describe('http REST API tests', () => {
   //     });
   // });
 
+
   it('Auth0 should login User via facebook', (done) => {
     request(app)
       .post('/oauth/social/access_token')
@@ -177,7 +186,15 @@ describe('http REST API tests', () => {
       });
   });
 
-  it(`Facebook Userinfo found using access token: ${loggedInUserAccessToken}`, (done) => {
+  it('Auth0 should accept user with valid access token', (done) => {
+    authService.validateUser(loggedInUserAccessToken)
+      .then((res) => {
+        expect(res).toNotBe(null);
+        done();
+      });
+  });
+
+  it(`Auth0 returns Facebook info with valid access token: ${loggedInUserAccessToken}`, (done) => {
     request(app)
       .get('/api/userinfo')
       .set('authorization', `${authResponse.token_type} ${authResponse.access_token}`)
@@ -204,7 +221,7 @@ describe('http REST API tests', () => {
       });
   });
 
-  it(`Twitter Userinfo found using access token`, (done) => {
+  it(`Auth0 returns Twitter info using valid access token`, (done) => {
     request(app)
       .get('/api/userinfo')
       .set('authorization', `${authResponse.token_type} ${authResponse.access_token}`)
@@ -240,6 +257,29 @@ describe('http REST API tests', () => {
         done();
       });
   });
+
+  it('Server accepts /api /app access with valid access_token', (done) => {
+    request(app)
+      .get('/api/authorized')
+      .set('authorization', `${authResponse.token_type} ${authResponse.access_token}`)
+      .end((err, res) => {
+        expect(err).toBe(null);
+        expect(res).toNotBe(null);
+        done();
+      });
+  });
+
+  it('Server rejects /api /app access with an invalid access_token', (done) => {
+    request(app)
+      .get('/api/authorized')
+      .set('authorization', `${authResponse.token_type} 12345678910`) // invalid auth_token
+      .end((err, res) => {
+        expect(err).toBe(null);
+        done();
+      });
+  });
+
+
 
 
 

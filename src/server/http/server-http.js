@@ -27,7 +27,7 @@ const RESTServer = () =>
         jwksRequestsPerMinute: 5,
         jwksUri: 'https://tinglebuzz.auth0.com/.well-known/jwks.json',
       }),
-      audience: 'https://tinglebuzz/api',
+      audience: ['https://tinglebuzz/api', 'https://tinglebuzz/app'],
       issuer: 'https://tinglebuzz.auth0.com/',
       algorithms: ['RS256'],
     });
@@ -42,12 +42,18 @@ const RESTServer = () =>
       cert: fs.readFileSync(path.join(__dirname, '../../../', process.env.SSL_CERT || 'ssl/client-cert.pem')),
     };
 
-
     app.set('view engine', 'pug');
     app.set('views', './templates');
     app.use('/api/*', jwtCheck);  // protect all routes to api/* with valid JWT
     app.use(bodyparser.json());
-    app.use(passport.initialize());
+
+    //handle errors
+    app.use(function (err, req, res, next) {
+      if (err.name === 'UnauthorizedError') {
+        res.redirect('/unauthorized');
+      }
+    });
+   // app.use(passport.initialize());
 
     if (process.env.NODE_ENV === 'development') {
       proxy = httpProxy.createServer({

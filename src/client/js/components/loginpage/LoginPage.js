@@ -12,7 +12,6 @@ class LoginPage extends ReduxComponent {
     super(props, context);
     this.onValueChange = this.onValueChange.bind(this);
     this.onLogin = this.onLogin.bind(this);
-    this.onLoadAPlugin = this.onLoadAPlugin.bind(this);
     this.state = {
       form: {
         email: 'leedium@me.com',
@@ -32,11 +31,6 @@ class LoginPage extends ReduxComponent {
       username: this.state.form.email,
       password: this.state.form.password,
       type: 'DB'}).then(res => this.goHome());
-  }
-
-  onLoadAPlugin(e) {
-    e.preventDefault();
-    import('moment').then(moment => console.log(moment));
   }
 
   onValueChange(e) {
@@ -64,7 +58,6 @@ class LoginPage extends ReduxComponent {
           <EmailInput error={this.state.errors.email} value={this.state.form.email} placeholder="" type="" name="email" label="" onValueChange={this.onValueChange} />
           <InputField error={this.state.errors.password} value={this.state.form.password} placeholder="" type="password" name="password" label="Password" onValueChange={this.onValueChange} />
           <button onClick={this.onLogin}>login</button>
-          <button onClick={this.onLoadAPlugin}>login</button>
         </form>
         <p>Not a member? <Link to="/register">Register here</Link></p>
       </div>
@@ -72,4 +65,4 @@ class LoginPage extends ReduxComponent {
   }
 };
 
-export default connect(ReduxComponent.mapStateToProps, userActions)(LoginPage);
+export default connect(ReduxComponent.mapStateToProps, ReduxComponent.mapDispatchToProps)(LoginPage);

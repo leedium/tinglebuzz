@@ -1,18 +1,23 @@
 import React from 'react';
-import {connect} from 'react-redux';
 
-
+import { validateUserToken } from '../../../api/actions/userActions';
 
 class ReduxComponent extends React.Component {
 
 }
 
-ReduxComponent.mapStateToProps = function(state){
+ReduxComponent.mapStateToProps = (state) => {
   return {
     user: state.user,
   };
 };
 
+ReduxComponent.mapDispatchToProps = (dispatch) => {
+  return {
+    validateUserToken: () => {
+      dispatch(validateUserToken());
+    },
+  };
+};
+
 export default ReduxComponent;
-
-

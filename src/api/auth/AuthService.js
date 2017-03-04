@@ -1,17 +1,35 @@
 import request from 'superagent';
 import {WebAuth, Authentication} from 'auth0-js';
+
 const CLIENT_ID = 'HG1R6XaTntKLwDSUoBKkWX6gFgyQBc0o';
+
+var authConfig = {
+  domain: 'tinglebuzz.auth0.com',
+  clientID: CLIENT_ID,
+}
 class _authService {
   constructor() {
-    this.auth0 = new WebAuth({
-      domain: 'tinglebuzz.auth0.com',
-      clientID: CLIENT_ID,
+
+    this.authentication = new Authentication(authConfig);
+    this.auth0 = new WebAuth(authConfig);
+
+  }
+
+  validateUser(accessToken = this.getToken().accessToken) {
+    return new Promise((resolve, reject) => {
+
+      if(!accessToken){
+        reject({});
+        return;
+      }
+
+      this.authentication.userInfo(accessToken, (err, res) => {
+        if(err) {
+          reject(err);
+        }
+        resolve(res);
+      });
     });
-
-    if(!!this.getToken()){
-      console.log('already logged in');
-    }
-
   }
 
   signup({email, password, user_metadata}) {
@@ -89,10 +107,14 @@ class _authService {
 
   getToken() {
     if (process.browser) {
+      if (!localStorage.getItem('access_token') && !localStorage.getItem('id_token')) {
+        return {};
+      }
+
       return {
-          accessToken: localStorage.getItem('access_token'),
-          idToken: localStorage.getItem('id_token'),
-        };
+        accessToken: localStorage.getItem('access_token'),
+        idToken: localStorage.getItem('id_token'),
+      };
     }
   }
 
@@ -100,6 +122,7 @@ class _authService {
     return Promise.resolve({}).then(() => {
       if (process.browser) {
         localStorage.removeItem('access_token');
+        localStorage.removeItem('id_token');
       }
       this.auth0.logout();
     });
@@ -108,11 +131,12 @@ class _authService {
 
 class AuthService {
   static getInstance() {
-    if (!AuthService.instance){
+    if (!AuthService.instance) {
       AuthService.instance = new _authService();
     }
     return AuthService.instance;
   }
+
   constructor() {
     throw new Error('Instances only accessed through AuthService.getInstance()')
   }
